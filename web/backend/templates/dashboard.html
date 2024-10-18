@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - WebAnalyst</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style-main-page.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='images/logo-letter.jpg') }}" type="image/x-icon">
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="navbar-logo">
+            <img src="{{ url_for('static', filename='images/logo-letter.jpg') }}" alt="Logo">
+        </div>
+        <nav class="navbar-sections">
+            <div class="navbar-section">
+                <a href="#">Analysis</a>
+                <div class="dropdown">
+                    <ul>
+                        <li><a href="#">Data cleaning</a></li>
+                        <li><a href="#">Get insights</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="navbar-section">
+                <a href="#">Plots</a>
+                <div class="dropdown">
+                    <ul>
+                        <li><a href="#">Simple plots</a></li>
+                        <li><a href="#">Dashboards</a></li>
+                    </ul>
+                </div>
+            </div>
+            <!-- <div class="navbar-section">
+                <a href="#">Data Cleaning</a>
+                <div class="dropdown">
+                    <ul>
+                        <li><a href="#">Subsection 1</a></li>
+                        <li><a href="#">Subsection 2</a></li>
+                    </ul>
+                </div>
+            </div> -->
+            <div class="navbar-section">
+                <a href="#">Predicting Model (Beta)</a>
+                <div class="dropdown">
+                    <ul>
+                        <li><a href="#">Bayes model</a></li>
+                        <li><a href="#">Linear regression</a></li>
+                        <li><a href="#">Logistic regression</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div class="navbar-profile">
+            <div class="profile-icon" onclick="toggleProfileMenu()">
+                <img src="{{ url_for('static', filename='images/profile-icon.png') }}" alt="Profile">
+            </div>
+        
+            <div class="profile-menu" id="profileMenu">
+                <span class="close-btn" onclick="toggleProfileMenu()">×</span>
+                <div class="profile-header">
+                    <img src="{{ url_for('static', filename='images/profile-pic.jpg') }}" alt="Profile Picture" class="profile-picture">
+                    <span class="profile-name">{{ user_name }}</span> <!-- Отображаем имя пользователя -->
+                </div>
+                <hr class="profile-divider">
+                <ul>
+                    <li><a href="/profile">Your Profile</a></li>
+                    <li><a href="/history">History</a></li>
+                    <li><a href="/projects">Your Projects</a></li>
+                    <li><a href="/logout">Sign Out</a></li>
+                </ul>
+            </div>
+        </div>
+        
+    </header>
+
+    <main>
+        <section>
+            <h2>Your Analytics</h2>
+            <p>Здесь будет отображаться основная информация о платформе, графики и аналитика.</p>
+        </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='scripts/scripts.js') }}"></script>
+</body>
+</html>

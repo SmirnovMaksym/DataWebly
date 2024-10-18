@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign in to WebAnalyst</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style-login-register.css') }}">
+</head>
+<body>
+
+
+
+<div class="form-container" id="loginForm">
+    <h2>Sign in to WebAnalyst</h2>
+    <form method="POST" action="/login">
+        <div class="form-group">
+            <label for="loginEmail">Email address</label>
+            <input type="email" id="loginEmail" name="email" placeholder="Enter your email" required>
+        </div>
+        <div class="form-group">
+            <label for="loginPassword">Password</label>
+            <input type="password" id="loginPassword" name="password" placeholder="Enter your password" required>
+        </div>
+        <div class="form-group">
+            <button type="submit">Sign in</button>
+        </div>
+    </form>
+    <div class="form-switch">
+        <p>New to WebAnalyst? <a href="#" onclick="showRegister()">Create an account</a></p>
+    </div>
+</div>
+    
+
+
+<input type="hidden" id="showRegister" value="{{ 'true' if show_register else 'false' }}">
+
+<div class="form-container" id="registerForm" style="display: none;">
+    <h2>Create Account</h2>
+    <form method="POST" action="/register" onsubmit="return checkPasswords()">
+        <div class="form-group">
+            <label for="registerName">Name</label>
+            <input type="text" id="registerName" name="name" placeholder="Enter your name" value="{{ name }}" required>
+        </div>
+        <div class="form-group">
+            <label for="registerEmail">Email</label>
+            <input type="email" id="registerEmail" name="email" placeholder="Enter your email" value="{{ email }}" required>
+            <p class="error-message" id="emailError">{{ email_error }}</p>
+        </div>
+        <div class="form-group">
+            <label for="registerPassword">Password</label>
+            <input type="password" id="registerPassword" name="password" placeholder="Enter your password" required>
+        </div>
+        <div class="form-group">
+            <label for="registerConfirmPassword">Confirm Password</label>
+            <input type="password" id="registerConfirmPassword" name="confirm_password" placeholder="Confirm your password">
+            <p class="error-message" id="passwordError">{{ password_error }}</p>
+        </div>
+        <div class="form-group">
+            <button type="submit">Register</button>
+        </div>
+    </form>
+    <div class="form-switch">
+        <p>Already have an account? <a href="#" onclick="showLogin()">Sign in here</a></p>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='scripts/scripts.js') }}"></script>
+
+</body>
+</html>

@@ -1,0 +1,85 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #1b1b1b; /* Dark background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  flex-direction: column; /* Added for layout of the title above the form */
+}
+
+h2 {
+  color: #c0c0c0; /* Light grey text */
+  margin-bottom: 30px; /* Reduced margin for better layout */
+}
+
+.form-container {
+  background-color: #242424; /* Darker grey */
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  width: 300px;
+  color: white;
+  text-align: center; /* Center align text within the form container */
+}
+
+.form-group {
+  margin-bottom: 13px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.form-group input {
+  width: 90%;
+  padding: 10px;
+  border: 1px solid #333; /* Dark border for input */
+  border-radius: 5px;
+  background-color: #333; /* Dark input background */
+  color: white;
+}
+
+.form-group input:focus {
+  border-color: #66cc66; /* Light green focus */
+  outline: none;
+}
+
+.form-group button {
+  width: 100%;
+  padding: 10px;
+  background-color: #28a745; /* Green background for button */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.form-group button:hover {
+  background-color: #218838; /* Darker green on hover */
+}
+
+.form-switch {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.form-switch a {
+  color: #66cc66; /* Light green link */
+  text-decoration: none;
+}
+
+.form-switch a:hover {
+  text-decoration: underline;
+}
+
+
+.error-message {
+  color: red;
+  font-size: 12px;
+}

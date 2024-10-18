@@ -1,0 +1,171 @@
+/* Общий стиль */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #2b2b2b;
+    color: white;
+}
+
+/* Навигационная панель */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #3a3a3a;
+    padding: 10px 20px;
+}
+
+.navbar-logo img {
+    max-height: 100%;  /* Логотип не превышает высоту панели */
+    width: auto;       /* Пропорциональная ширина */
+    display: block;    /* Убираем возможные пробелы вокруг изображения */
+}
+
+/* Секции навигации */
+.navbar-sections {
+    display: flex;
+}
+
+.navbar-section {
+    position: relative;
+    margin: 0 15px;
+}
+
+.navbar-section a {
+    color: white;
+    text-decoration: none;
+    padding: 10px;
+    display: inline-block;
+}
+
+.navbar-section a::after {
+    content: '▼';
+    margin-left: 5px;
+    font-size: 10px;
+}
+
+.navbar-section .dropdown a::after {
+    content: none; /* Убираем символ треугольника */
+}
+
+/* Выпадающее меню для секций */
+.navbar-section .dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #3a3a3a;
+    display: none;
+    padding: 10px 0;
+    width: 150px;
+}
+
+.navbar-section .dropdown ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.navbar-section .dropdown ul li {
+    padding: 10px;
+}
+
+.navbar-section .dropdown ul li a {
+    color: white;
+    text-decoration: none;
+}
+
+.navbar-section:hover .dropdown {
+    display: block;
+}
+
+/* Профиль */
+.navbar-profile {
+    position: relative;
+}
+
+.profile-icon img {
+    height: 40px;
+    cursor: pointer;
+}
+
+/* Меню профиля, которое выезжает справа */
+.profile-menu {
+    position: fixed;
+    right: -300px; /* Исходное положение за пределами экрана */
+    top: 0;
+    width: 300px;
+    height: 100%;
+    background-color: #2b2b2b; /* Цвет фона совпадает с основным фоном */
+    border-left: 1px solid white; /* Белая линия обводки */
+    border-radius: 10px 0 0 10px; /* Закругленные края слева */
+    transition: right 0.15s ease-in-out; /* Анимация выезда */
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+}
+
+/* Показ меню профиля */
+.profile-menu.active {
+    right: 0; /* Меню выезжает справа */
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+}
+
+.profile-picture {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%; /* Картинка профиля круглая */
+    margin-right: 10px;
+}
+
+.profile-name {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Разделитель между картинкой и меню */
+.profile-divider {
+    width: 80%;
+    margin: 0 auto;
+    border: 0.5px solid white;
+}
+
+.profile-menu ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 20px 0;
+}
+
+.profile-menu ul li {
+    padding: 10px 20px;
+}
+
+.profile-menu ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    display: block;
+}
+
+.profile-menu ul li a:hover {
+    background-color: #3a3a3a; /* Немного затемняем при наведении */
+}
+
+
+/* Кнопка закрытия меню (крестик) */
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    color: white;
+    cursor: pointer;
+}
+
+.close-btn:hover {
+    color: #ccc;
+}
