@@ -175,6 +175,7 @@ body {
 .data-cleaning-section {
     display: flex;
     justify-content: space-around;
+    flex-direction: column;
     padding: 20px;
 }
 
@@ -320,4 +321,35 @@ body {
     margin-top: 10px;
     font-size: 14px;
     color: #ddd;
+}
+
+
+/* Контейнер для таблицы, которая будет отображаться ниже */
+.table-container {
+    margin-top: 40px; /* Добавляем отступ сверху, чтобы таблица не прилегала к другим элементам */
+    width: 100%; /* Таблица займет всю ширину контейнера */
+    overflow-x: auto; /* Добавляем горизонтальную прокрутку, если таблица слишком большая */
+}
+
+/* Таблица */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.data-table th, .data-table td {
+    padding: 10px;
+    border: 1px solid #615151;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.data-table th {
+    background-color: #3a3a3a;
+    color: blue;
+}
+
+.data-table tr:nth-child(even) {
+    background-color: #f2f2f2;
 }

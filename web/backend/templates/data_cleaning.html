@@ -11,7 +11,6 @@
                 <span class="file-message">Drag & drop a file here or click to upload</span>
                 <input type="file" id="fileInput" name="file" accept=".xlsx,.csv" hidden>
             </div>
-            <!-- Элемент для отображения названия загруженного файла -->
             <p id="fileNameDisplay" class="file-name">No file uploaded</p>
         </div>
 
@@ -52,7 +51,6 @@
         <!-- Правая часть: Кнопки и progress bar -->
         <div class="actions">
             <button id="startProcess" class="action-button">Start Data Cleaning</button>
-            <button id="downloadFile" class="action-button disabled" disabled>Download Cleaned File</button>
 
             <div class="progress-bar-container">
                 <div class="progress-bar" id="progressBar">
@@ -62,6 +60,9 @@
             </div>
         </div>
     </div>
+
+    <!-- Контейнер для таблицы -->
+    <div id="tableContainer" class="table-container"></div>
 </section>
 
 <script src="{{ url_for('static', filename='scripts/data_cleaning.js') }}"></script>

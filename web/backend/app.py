@@ -1,10 +1,11 @@
-from flask import Flask, request, redirect, url_for, render_template, flash, session, jsonify, send_from_directory
+from flask import Flask, request, redirect, url_for, render_template, flash, session, jsonify, send_file
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 import os
 import sys
 import pandas as pd
+import io
 
 # Добавляем корневую директорию проекта в sys.path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -28,6 +29,10 @@ class User(db.Model):
     name = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(255), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
+    avatar = db.Column(db.String(255), default='default.png')
+    bio = db.Column(db.Text)  # Поле для биографии
+    country = db.Column(db.String(100))  # Поле для страны
+    linkedin = db.Column(db.String(255))  # Поле для ссылки LinkedIn
 
     def __repr__(self):
         return '<User %r>' % self.name
@@ -87,7 +92,7 @@ def register():
         confirm_password = request.form['confirm_password']
 
         if password != confirm_password:
-            password_error = 'Passwords do not match.'
+            password_error = 'Passwords do not match'
             return render_template('index.html', email_error=email_error, password_error=password_error, name=name, email=email, show_register=True)
 
         user = User.query.filter_by(email=email).first()
@@ -112,6 +117,7 @@ def data_cleaning():
         return render_template('data_cleaning.html', user_name=user_name)
     return redirect(url_for('login'))
 
+# Маршрут для обработки файла и возврата очищенных данных
 @app.route('/process-data', methods=['POST'])
 def process_data():
     if 'file' not in request.files:
@@ -122,28 +128,86 @@ def process_data():
     if file.filename == '':
         return jsonify({'error': 'No selected file'})
 
-    filename = secure_filename(file.filename)
-    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-
-    if not os.path.exists(app.config['UPLOAD_FOLDER']):
-        os.makedirs(app.config['UPLOAD_FOLDER'])
-
-    file.save(file_path)
+    # Читаем файл в память
+    file_stream = io.BytesIO(file.read())
+    
+    # Определяем формат файла (csv или Excel)
+    if file.filename.endswith('.csv'):
+        df = pd.read_csv(file_stream)
+    else:
+        df = pd.read_excel(file_stream)
 
     # Получаем список выбранных функций
     operations = request.form.getlist('cleaningFunction')
 
-    # Очищаем данные и сохраняем в папке "Prepared Data"
-    cleaned_file_path = clean_data(file_path, operations)
+    # Очищаем данные (применяем операции)
+    cleaned_df = clean_data(df, operations)
 
-    # Возвращаем только имя файла
-    cleaned_filename = os.path.basename(cleaned_file_path)
-    return jsonify({'status': 'success', 'cleaned_file_path': cleaned_filename})
+    # Возвращаем очищенные данные в формате JSON
+    return jsonify({
+        'status': 'success',
+        'data': cleaned_df.to_dict(orient='records')  # Преобразуем DataFrame в список словарей для отображения
+    })
 
-# Маршрут для скачивания очищенного файла
-@app.route('/download-cleaned-file/<filename>', methods=['GET'])
-def download_cleaned_file(filename):
-    return send_from_directory('Prepared Data', filename, as_attachment=True)
+AVATAR_UPLOAD_FOLDER = 'static/avatars'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+app.config['UPLOAD_FOLDER'] = AVATAR_UPLOAD_FOLDER
+
+# Функция для проверки типа загружаемого файла
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+# Маршрут для отображения профиля
+@app.route('/profile')
+def profile():
+    if 'user_id' in session:
+        user_id = session['user_id']
+        user = User.query.get(user_id)
+
+        # Передаем значения полей в шаблон
+        return render_template('profile.html', 
+                               user_name=user.name, 
+                               user_avatar=user.avatar,
+                               user_bio=user.bio, 
+                               user_country=user.country, 
+                               user_linkedin=user.linkedin)
+    return redirect(url_for('login'))
+
+
+@app.route('/update-profile', methods=['POST'])
+def update_profile():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    user_id = session['user_id']
+    user = User.query.get(user_id)
+
+    # Изменение имени пользователя
+    new_name = request.form['username']
+    user.name = new_name
+
+    # Изменение био, страны и LinkedIn
+    user.bio = request.form['bio']
+    user.country = request.form['country']
+    user.linkedin = request.form['linkedin']
+
+    # Проверка, загружен ли новый аватар
+    if 'avatar' in request.files:
+        avatar = request.files['avatar']
+        if avatar and allowed_file(avatar.filename):
+            filename = secure_filename(avatar.filename)
+            avatar.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            user.avatar = filename
+
+    db.session.commit()
+    session['user_name'] = user.name
+    session['user_avatar'] = user.avatar
+
+    flash('Profile updated successfully!')
+    return redirect(url_for('profile'))
+
 
 
 if __name__ == '__main__':
