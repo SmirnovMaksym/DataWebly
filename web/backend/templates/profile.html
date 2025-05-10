@@ -16,7 +16,7 @@
         <div class="form-group">
             <label for="avatar">Avatar</label>
             <input type="file" id="avatar" name="avatar">
-            <img src="{{ url_for('static', filename='avatars/' + user_avatar) }}" alt="Current Avatar" class="profile-avatar">
+            <img src="{{ url_for('static', filename='avatars/' + user_avatar) }}" alt="Current Avatar" class="profile-avatar avatar">
         </div>
 
         <!-- Bio пользователя -->
@@ -34,7 +34,7 @@
         <!-- LinkedIn пользователя -->
         <div class="form-group">
             <label for="linkedin">LinkedIn</label>
-            <input type="url" id="linkedin" name="linkedin" value="{{ user_linkedin }}" placeholder="LinkedIn">
+            <input type="url" id="linkedin" name="linkedin" value="{{ user_linkedin or '' }}" placeholder="LinkedIn">
         </div>
 
         <!-- Кнопка для сохранения изменений -->

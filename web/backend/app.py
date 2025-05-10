@@ -6,6 +6,12 @@ import os
 import sys
 import pandas as pd
 import io
+import uuid
+import matplotlib
+matplotlib.use('Agg')  # 🔧 ОБЯЗАТЕЛЬНО ДО ИМПОРТА pyplot
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+
 
 # Добавляем корневую директорию проекта в sys.path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -21,6 +27,12 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Qqqqq111!@localhos
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
+
+TEMP_FOLDER = 'temp_files'
+app.config['TEMP_FOLDER'] = TEMP_FOLDER
+
+if not os.path.exists(TEMP_FOLDER):
+    os.makedirs(TEMP_FOLDER)
 
 # Определение модели пользователя
 class User(db.Model):
@@ -54,6 +66,7 @@ def login():
         if user and check_password_hash(user.password, password):
             session['user_id'] = user.id
             session['user_name'] = user.name
+            session['user_avatar'] = user.avatar  # добавляем аватар в сессию
             return redirect(url_for('dashboard'))
 
         flash('Invalid email or password.')
@@ -74,7 +87,8 @@ def logout():
 def dashboard():
     if 'user_name' in session:
         user_name = session['user_name']
-        return render_template('dashboard.html', user_name=user_name)
+        user_avatar = session.get('user_avatar', 'default-avatar.jpg')  # используем аватар по умолчанию, если не найден
+        return render_template('dashboard.html', user_name=user_name, user_avatar=user_avatar)
     return redirect(url_for('login'))
 
 # Обработка регистрации
@@ -114,7 +128,8 @@ def register():
 def data_cleaning():
     if 'user_name' in session:
         user_name = session['user_name']
-        return render_template('data_cleaning.html', user_name=user_name)
+        user_avatar = session.get('user_avatar', 'default-avatar.jpg')
+        return render_template('data_cleaning.html', user_name=user_name, user_avatar=user_avatar)
     return redirect(url_for('login'))
 
 # Маршрут для обработки файла и возврата очищенных данных
@@ -124,30 +139,48 @@ def process_data():
         return jsonify({'error': 'No file part'})
 
     file = request.files['file']
-
     if file.filename == '':
         return jsonify({'error': 'No selected file'})
 
-    # Читаем файл в память
+    # Чтение файла
     file_stream = io.BytesIO(file.read())
-    
-    # Определяем формат файла (csv или Excel)
     if file.filename.endswith('.csv'):
         df = pd.read_csv(file_stream)
     else:
         df = pd.read_excel(file_stream)
 
-    # Получаем список выбранных функций
+    preview_df = df.head(10)
     operations = request.form.getlist('cleaningFunction')
+    selected_columns = request.form.getlist(
+        'selectedColumns')  # получаем выбранные пользователем столбцы для удаления дубликатов
+    date_column = request.form.get('dateColumn')  # получаем выбранный столбец с датами
+    missing_columns = request.form.getlist('missingValueColumns')
 
-    # Очищаем данные (применяем операции)
-    cleaned_df = clean_data(df, operations)
+    cleaned_df = clean_data(df, operations, selected_columns, date_column, missing_columns)
 
-    # Возвращаем очищенные данные в формате JSON
+    # Сохранение очищенного файла с уникальным именем
+    file_id = str(uuid.uuid4())  # Генерация уникального имени
+    file_path = os.path.join(app.config['TEMP_FOLDER'], f'{file_id}.csv')
+    cleaned_df.to_csv(file_path, index=False)
+
+    def safe_json(df):
+        return df.where(pd.notnull(df), None).to_dict(orient='records')
+
     return jsonify({
         'status': 'success',
-        'data': cleaned_df.to_dict(orient='records')  # Преобразуем DataFrame в список словарей для отображения
+        'preview': safe_json(preview_df),
+        'cleaned_preview': safe_json(cleaned_df.head(10)),
+        'file_id': file_id
     })
+
+
+
+@app.route('/download-cleaned-file/<file_id>', methods=['GET'])
+def download_cleaned_file(file_id):
+    file_path = os.path.join(app.config['TEMP_FOLDER'], f'{file_id}.csv')
+    if os.path.exists(file_path):
+        return send_file(file_path, as_attachment=True)
+    return jsonify({'error': 'File not found'}), 404
 
 AVATAR_UPLOAD_FOLDER = 'static/avatars'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
@@ -208,7 +241,91 @@ def update_profile():
     flash('Profile updated successfully!')
     return redirect(url_for('profile'))
 
+@app.route('/preview-columns', methods=['POST'])
+def preview_columns():
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file part'})
+
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'})
+
+    file_stream = io.BytesIO(file.read())
+    if file.filename.endswith('.csv'):
+        df = pd.read_csv(file_stream, nrows=5)
+    else:
+        df = pd.read_excel(file_stream, nrows=5)
+
+    columns = list(df.columns)
+    return jsonify({'columns': columns})
+
+@app.route('/preview-data', methods=['POST'])
+def preview_data():
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file part'})
+
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'})
+
+    file_stream = io.BytesIO(file.read())
+    try:
+        if file.filename.endswith('.csv'):
+            df = pd.read_csv(file_stream)
+        else:
+            df = pd.read_excel(file_stream)
+    except Exception as e:
+        return jsonify({'error': str(e)})
+
+    preview_df = df.head(10)
+    return jsonify({'preview': preview_df.where(pd.notnull(preview_df), None).to_dict(orient='records')})
+
+
+@app.route('/simple-plots')
+def simple_plots():
+    if 'user_name' not in session:
+        return redirect(url_for('login'))
+    return render_template('simple_plots.html',
+                           user_name=session['user_name'],
+                           user_avatar=session.get('user_avatar', 'default-avatar.jpg'))
+
+@app.route('/get-plot-columns', methods=['POST'])
+def get_plot_columns():
+    files = request.files.getlist('files')
+    if len(files) == 0:
+        return jsonify({'error': 'No files provided'}), 400
+
+    dfs = [pd.read_csv(f) if f.filename.endswith('.csv') else pd.read_excel(f) for f in files]
+
+    if len(dfs) == 1:
+        return jsonify({
+            'file1': list(dfs[0].columns)
+        })
+    elif len(dfs) >= 2:
+        return jsonify({
+            'file1': list(dfs[0].columns),
+            'file2': list(dfs[1].columns)
+        })
+
+from plot_utils import build_plot as generate_plot
+
+@app.route('/build-plot', methods=['POST'])
+def build_plot():
+    try:
+        files = request.files.getlist('files')
+        if len(files) == 0:
+            return 'No files uploaded', 400
+
+        buf, mimetype = generate_plot(files, request.form)
+        return send_file(buf, mimetype=mimetype)
+
+    except Exception as e:
+        return str(e), 500
+
 
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+
+

@@ -17,41 +17,54 @@
         <!-- Центральная часть: Функции очистки данных с чекбоксами -->
         <div class="data-cleaning-options">
             <h3>Select Data Cleaning Functions</h3>
-            <form id="cleaningForm" enctype="multipart/form-data">
-                <ul>
-                    <li>
-                        <input type="checkbox" id="detectDuplicates" name="cleaningFunction" value="detect_duplicates">
-                        <label for="detectDuplicates">Detect duplicates</label>
-                        <span class="info-icon" data-tooltip="This function identifies and marks duplicate rows in the dataset.">i</span>
-                    </li>
-                    <li>
-                        <input type="checkbox" id="detectOutliers" name="cleaningFunction" value="detect_outliers">
-                        <label for="detectOutliers">Detect outliers</label>
-                        <span class="info-icon" data-tooltip="This function finds extreme values that may indicate errors in the data.">i</span>
-                    </li>
-                    <li>
-                        <input type="checkbox" id="fixDataTypes" name="cleaningFunction" value="fix_data_types">
-                        <label for="fixDataTypes">Fix data types</label>
-                        <span class="info-icon" data-tooltip="Ensures that data columns have the correct types (e.g., numbers, dates, text).">i</span>
-                    </li>
-                    <li>
-                        <input type="checkbox" id="makeConsistentNames" name="cleaningFunction" value="make_consistent_column_names">
-                        <label for="makeConsistentNames">Make consistent column names (recommended)</label>
-                        <span class="info-icon" data-tooltip="Standardizes column names for consistency (e.g., lowercase, no spaces).">i</span>
-                    </li>
-                    <li>
-                        <input type="checkbox" id="detectInappropriateValues" name="cleaningFunction" value="detect_inappropriate_values">
-                        <label for="detectInappropriateValues">Detect inappropriate values</label>
-                        <span class="info-icon" data-tooltip="Finds values that are invalid or unexpected based on the context.">i</span>
-                    </li>
-                </ul>
-            </form>
+               <form id="cleaningForm" enctype="multipart/form-data">
+                    <ul>
+                        <li class="cleaning-option">
+                            <input type="checkbox" id="makeConsistentNames" name="cleaningFunction" value="make_consistent_column_names">
+                            <label for="makeConsistentNames">Make consistent column names (recommended)</label>
+                        </li>
+
+                        <li class="cleaning-option">
+                            <input type="checkbox" id="removeMissing" name="cleaningFunction" value="remove_missing_values">
+                            <label for="removeMissing">Remove missing values</label>
+                            <select id="missingValueColumns" name="missingValueColumns" multiple size="2" class="column-select hidden inline-select"></select>
+                        </li>
+
+                        <li class="cleaning-option">
+                            <input type="checkbox" id="detectDuplicates" name="cleaningFunction" value="detect_duplicates">
+                            <label for="detectDuplicates">Detect duplicates</label>
+                            <select id="selectedColumns" name="selectedColumns" multiple size="2" class="column-select hidden inline-select"></select>
+                        </li>
+
+                        <li class="cleaning-option">
+                            <input type="checkbox" id="fixDates" name="cleaningFunction" value="fix_dates">
+                            <label for="fixDates">Fix dates</label>
+                            <select id="dateColumn" name="dateColumn" multiple size="2" class="column-select hidden inline-select"></select>
+                        </li>
+
+                        <li class="cleaning-option">
+                            <input type="checkbox" id="detectInappropriateValues" name="cleaningFunction" value="detect_inappropriate_values">
+                            <label for="detectInappropriateValues">Detect inappropriate values</label>
+                        </li>
+
+                        <li class="cleaning-option">
+                            <input type="checkbox" id="detectOutliers" name="cleaningFunction" value="detect_outliers">
+                            <label for="detectOutliers">Detect outliers</label>
+                        </li>
+
+                        <li class="cleaning-option">
+                            <input type="checkbox" id="fixDataTypes" name="cleaningFunction" value="fix_data_types">
+                            <label for="fixDataTypes">Fix data types</label>
+                        </li>
+                    </ul>
+                </form>
+
         </div>
 
         <!-- Правая часть: Кнопки и progress bar -->
         <div class="actions">
             <button id="startProcess" class="action-button">Start Data Cleaning</button>
-
+            <button id="downloadFile" class="action-button disabled" disabled>Download Cleaned File</button>
             <div class="progress-bar-container">
                 <div class="progress-bar" id="progressBar">
                     <div class="progress-bar-fill" id="progressFill"></div>
@@ -65,5 +78,6 @@
     <div id="tableContainer" class="table-container"></div>
 </section>
 
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/style-data-cleaning.css') }}">
 <script src="{{ url_for('static', filename='scripts/data_cleaning.js') }}"></script>
 {% endblock %}

@@ -1,0 +1,262 @@
+/* Основной контейнер для секции Data Cleaning */
+.data-cleaning-section {
+    display: flex;
+    justify-content: space-around;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.data-cleaning-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+/* Зона загрузки файлов */
+.file-upload {
+    flex: 1;
+    margin-right: 20px;
+}
+
+.file-drop-area {
+    width: 100%;
+    height: 200px;
+    border: 2px dashed #888;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #3a3a3a;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.file-drop-area:hover {
+    background-color: #4a4a4a;
+}
+
+.file-message {
+    color: white;
+    font-size: 16px;
+}
+
+.file-name {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #ddd;
+}
+
+/* Опции для очистки данных */
+.data-cleaning-options {
+    flex: 1;
+    padding: 0 20px;
+    color: white;
+}
+
+.data-cleaning-options ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.data-cleaning-options ul li {
+    margin: 10px 0;
+    font-size: 16px;
+}
+
+/* Информация (tooltip) */
+.info-icon {
+    margin-left: 10px;
+    color: #888;
+    cursor: pointer;
+}
+
+.info-icon {
+    position: relative;
+    display: inline-block;
+}
+
+.info-icon:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #3a3a3a;
+    color: white;
+    padding: 5px 8px;
+    border-radius: 5px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 999;
+    margin-top: 4px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+/* Правая часть: кнопки и прогресс-бар */
+.actions {
+    flex: 1;
+    text-align: center;
+}
+
+.action-button {
+    margin: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #555;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.action-button.disabled {
+    background-color: #888;
+    cursor: not-allowed;
+}
+
+.action-button:not(.disabled):hover {
+    background-color: #777;
+}
+
+
+.progress-bar-container {
+    margin-top: 20px;
+    width: 100%;
+    background-color: #888;
+    border-radius: 5px;
+    height: 20px;
+    position: relative;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 100%;
+    background-color: #2b2b2b;
+    border-radius: 5px;
+    position: relative;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    width: 0;
+    background-color: #5cb85c;
+    border-radius: 5px;
+    transition: width 0.4s ease;
+}
+
+#progressText {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    font-size: 14px;
+}
+.progress-bar-fill {
+    width: 0;
+    background-color: #5cb85c;
+    height: 100%;
+    border-radius: 5px;
+}
+
+/* Контейнер для таблицы */
+.table-container {
+    margin-top: 40px;
+    width: 100%;
+    overflow-x: auto;
+    padding: 10px;
+    background-color: #2b2b2b;  /* Фон контейнера таблицы для контраста */
+    border-radius: 10px;
+}
+
+/* Таблица */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    background-color: #3a3a3a;  /* Фон для таблицы */
+    color: #fff;  /* Белый текст */
+}
+
+/* Ячейки заголовков */
+.data-table th {
+    padding: 10px;
+    border: 1px solid #444;  /* Более тонкая линия */
+    text-align: left;
+    background-color: #444;  /* Тёмный фон заголовков */
+    font-weight: bold;
+}
+
+/* Ячейки данных */
+.data-table td {
+    padding: 10px;
+    border: 1px solid #615151;
+    text-align: left;
+    white-space: nowrap;
+    color: #ccc;  /* Лёгкий серый текст для данных */
+}
+
+/* Чередование строк */
+.data-table tr:nth-child(even) {
+    background-color: #555;  /* Чередование фона строк для лучшей видимости */
+}
+
+.data-table tr:hover {
+    background-color: #666;  /* Подсветка строки при наведении */
+}
+
+
+.progress-bar-fill {
+    width: 0;
+    background-color: #5cb85c;
+    height: 100%;
+    border-radius: 5px;
+    transition: width 0.4s ease;
+}
+
+.action-button.disabled {
+    background-color: #888;
+    cursor: not-allowed;
+}
+
+.hidden {
+    display: none;
+}
+
+.cleaning-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+    flex-wrap: nowrap;              /* Не переносим на новую строку */
+}
+
+.cleaning-option > label {
+    white-space: nowrap;
+}
+
+.inline-select {
+    height: 28px;
+    max-width: 150px;
+    background-color: #2b2b2b;
+    color: white;
+    border: 1px solid #555;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 14px;
+    flex-shrink: 0;                /* Не сжимается */
+    margin-left: auto;            /* Прижимает к правому краю */
+}
+
+.column-select {
+    height: 60px;         /* компактная высота */
+    max-width: 160px;
+    background-color: #2b2b2b;
+    color: white;
+    border: 1px solid #555;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 14px;
+}
+
+

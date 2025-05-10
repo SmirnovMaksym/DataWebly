@@ -17,9 +17,9 @@ body {
 }
 
 .navbar-logo img {
-    max-height: 100%;  /* Логотип не превышает высоту панели */
-    width: auto;       /* Пропорциональная ширина */
-    display: block;    /* Убираем возможные пробелы вокруг изображения */
+    max-height: 100%;
+    width: auto;
+    display: block;
 }
 
 /* Секции навигации */
@@ -45,11 +45,6 @@ body {
     font-size: 10px;
 }
 
-.navbar-section .dropdown a::after {
-    content: none; /* Убираем символ треугольника */
-}
-
-/* Выпадающее меню для секций */
 .navbar-section .dropdown {
     position: absolute;
     top: 100%;
@@ -60,23 +55,33 @@ body {
     width: 150px;
 }
 
+.navbar-section:hover .dropdown {
+    display: block;
+}
+
+/* Убираем точки перед текстом в списке подсекций */
 .navbar-section .dropdown ul {
-    list-style: none;
+    list-style: none; /* Убираем маркеры (точки) перед списком */
     padding: 0;
     margin: 0;
 }
 
-.navbar-section .dropdown ul li {
-    padding: 10px;
+/* Убираем треугольник для подсекций */
+.navbar-section .dropdown ul li a::after {
+    content: none; /* Убираем символ треугольника */
 }
 
+/* Стили для ссылок подсекций */
 .navbar-section .dropdown ul li a {
-    color: white;
-    text-decoration: none;
+    padding: 8px 15px; /* Немного увеличиваем отступ для лучшего вида */
+    display: block;
+    color: white; /* Цвет текста подсекций */
+    text-decoration: none; /* Убираем подчеркивание */
 }
 
-.navbar-section:hover .dropdown {
-    display: block;
+/* Смена цвета при наведении на подсекцию */
+.navbar-section .dropdown ul li a:hover {
+    background-color: #4a4a4a; /* Затемнение фона при наведении */
 }
 
 /* Профиль */
@@ -85,28 +90,26 @@ body {
 }
 
 .profile-icon img {
-    height: 40px;
+    height: 50px;
     cursor: pointer;
 }
 
-/* Меню профиля, которое выезжает справа */
+/* Меню профиля */
 .profile-menu {
     position: fixed;
-    right: -300px; /* Исходное положение за пределами экрана */
+    right: -300px;
     top: 0;
     width: 300px;
     height: 100%;
-    background-color: #2b2b2b; /* Цвет фона совпадает с основным фоном */
-    border-left: 1px solid white; /* Белая линия обводки */
-    border-radius: 10px 0 0 10px; /* Закругленные края слева */
-    transition: right 0.15s ease-in-out; /* Анимация выезда */
-    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.5);
+    background-color: #2b2b2b;
+    border-left: 1px solid white;
+    border-radius: 10px 0 0 10px;
+    transition: right 0.3s ease-in-out;
     z-index: 9999;
 }
 
-/* Показ меню профиля */
 .profile-menu.active {
-    right: 0; /* Меню выезжает справа */
+    right: 0;
 }
 
 .profile-header {
@@ -118,7 +121,7 @@ body {
 .profile-picture {
     width: 50px;
     height: 50px;
-    border-radius: 50%; /* Картинка профиля круглая */
+    border-radius: 50%;
     margin-right: 10px;
 }
 
@@ -127,7 +130,6 @@ body {
     font-weight: bold;
 }
 
-/* Разделитель между картинкой и меню */
 .profile-divider {
     width: 80%;
     margin: 0 auto;
@@ -135,7 +137,7 @@ body {
 }
 
 .profile-menu ul {
-    list-style-type: none;
+    list-style: none;
     padding: 0;
     margin: 20px 0;
 }
@@ -147,14 +149,11 @@ body {
 .profile-menu ul li a {
     color: white;
     text-decoration: none;
-    font-size: 16px;
-    display: block;
 }
 
 .profile-menu ul li a:hover {
-    background-color: #3a3a3a; /* Немного затемняем при наведении */
+    background-color: #3a3a3a;
 }
-
 
 /* Кнопка закрытия меню (крестик) */
 .close-btn {
@@ -170,186 +169,10 @@ body {
     color: #ccc;
 }
 
-
-/* Основной контейнер для секции Data Cleaning */
-.data-cleaning-section {
-    display: flex;
-    justify-content: space-around;
-    flex-direction: column;
-    padding: 20px;
-}
-
-.data-cleaning-container {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-}
-
-/* Зона загрузки файлов */
-.file-upload {
-    flex: 1;
-    margin-right: 20px;
-}
-
-.file-drop-area {
-    width: 100%;
-    height: 200px;
-    border: 2px dashed #888;
-    border-radius: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #3a3a3a;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.file-drop-area:hover {
-    background-color: #4a4a4a;
-}
-
-.file-message {
-    color: white;
-    font-size: 16px;
-}
-
-/* Опции для очистки данных */
-.data-cleaning-options {
-    flex: 1;
-    padding: 0 20px;
-    color: white;
-}
-
-.data-cleaning-options ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-.data-cleaning-options ul li {
-    margin: 10px 0;
-    font-size: 16px;
-}
-
-.info-icon {
-    margin-left: 10px;
-    color: #888;
-    cursor: pointer;
-    position: relative;
-}
-
-.info-icon:hover::after {
-    content: attr(data-tooltip);
-    position: absolute;
-    background-color: #3a3a3a;
-    color: white;
-    padding: 5px;
-    border-radius: 5px;
-    top: -5px;
-    left: 20px;
-    width: 200px;
-    font-size: 12px;
-}
-
-/* Правая часть: кнопки и прогресс-бар */
-.actions {
-    flex: 1;
-    text-align: center;
-}
-
-.action-button {
-    margin: 10px;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    background-color: #555;
-    color: white;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.action-button.disabled {
-    background-color: #888;
-    cursor: not-allowed;
-}
-
-.action-button:not(.disabled):hover {
-    background-color: #777;
-}
-
-/* Прогресс-бар */
-.progress-bar-container {
-    margin-top: 20px;
-    width: 100%;
-    background-color: #888;
-    border-radius: 5px;
-    height: 20px;
-    position: relative;
-}
-
-.progress-bar {
-    width: 100%;
-    height: 100%;
-    background-color: #2b2b2b;
-    border-radius: 5px;
-    position: relative;
-}
-
-.progress-bar-fill {
-    height: 100%;
-    width: 0;
-    background-color: #5cb85c;
-    border-radius: 5px;
-    transition: width 0.4s ease;
-}
-
-#progressText {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    color: white;
-    font-size: 14px;
-}
-
-
-.file-drop-area.dragging {
-    background-color: #4a4a4a; /* Меняется цвет при перетаскивании */
-    border-color: #fff; /* Изменяем цвет границы */
-}
-
-.file-name {
-    margin-top: 10px;
-    font-size: 14px;
-    color: #ddd;
-}
-
-
-/* Контейнер для таблицы, которая будет отображаться ниже */
-.table-container {
-    margin-top: 40px; /* Добавляем отступ сверху, чтобы таблица не прилегала к другим элементам */
-    width: 100%; /* Таблица займет всю ширину контейнера */
-    overflow-x: auto; /* Добавляем горизонтальную прокрутку, если таблица слишком большая */
-}
-
-/* Таблица */
-.data-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
-
-.data-table th, .data-table td {
-    padding: 10px;
-    border: 1px solid #615151;
-    text-align: left;
-    white-space: nowrap;
-}
-
-.data-table th {
-    background-color: #3a3a3a;
-    color: blue;
-}
-
-.data-table tr:nth-child(even) {
-    background-color: #f2f2f2;
+.avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid black;
 }

@@ -1,0 +1,136 @@
+.simple-plots-section {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.plot-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 40px;
+}
+
+.plot-upload,
+.plot-settings,
+.plot-preview {
+    flex: 1;
+    background-color: #3a3a3a;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.plot-upload input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    background-color: #444;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.plot-upload p {
+    color: #aaa;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.plot-settings label {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: white;
+}
+
+.plot-settings select {
+    width: 100%;
+    padding: 6px;
+    background-color: #2b2b2b;
+    color: white;
+    border: 1px solid #666;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.plot-settings button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #5cb85c;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.plot-settings button:hover {
+    background-color: #4cae4c;
+}
+
+.plot-preview img {
+    max-width: 100%;
+    border-radius: 6px;
+    border: 1px solid #555;
+    margin-top: 10px;
+}
+
+.plot-preview button {
+    margin: 5px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.plot-settings input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    background-color: #2b2b2b;
+    color: white;
+    border: 1px solid #666;
+    border-radius: 4px;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.plot-preview button {
+    padding: 8px 16px;
+    background-color: #5cb85c;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 14px;
+    margin: 5px;
+    transition: background-color 0.3s;
+}
+
+.plot-preview button:hover {
+    background-color: #4cae4c;
+}
+
+.custom-file-label {
+    display: inline-block;
+    padding: 10px 16px;
+    background-color: #5bc0de;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+    font-size: 14px;
+}
+
+.custom-file-label:hover {
+    background-color: #31b0d5;
+}
+
+.hidden-input {
+    display: none;
+}

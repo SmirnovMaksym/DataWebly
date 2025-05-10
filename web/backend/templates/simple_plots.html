@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Simple Plots - WebAnalyst{% endblock %}
+
+{% block content %}
+<section class="simple-plots-section">
+    <div class="plot-container">
+        <!-- Левая колонка: загрузка -->
+        <div class="plot-upload">
+            <h3>Upload files (max: 2)</h3>
+            <label for="plotFileInput" class="custom-file-label">📂 Choose files</label>
+            <input type="file" id="plotFileInput" multiple accept=".csv,.xlsx" class="hidden-input">
+            <p id="plotFileNameDisplay">No files uploaded</p>
+        </div>
+
+        <!-- Центр: настройки -->
+        <div class="plot-settings">
+            <h3>Plot Settings</h3>
+            <form id="plotForm">
+                <label id="mergeLabel1" for="mergeLeft" class="hidden">Merge on column (File 1)</label>
+                <select id="mergeLeft" name="mergeLeft" class="hidden"></select>
+
+                <label id="mergeLabel2" for="mergeRight" class="hidden">Merge on column (File 2)</label>
+                <select id="mergeRight" name="mergeRight" class="hidden"></select>
+
+                <label for="xColumn">X axis</label>
+                <select id="xColumn" name="xColumn"></select>
+
+                <label for="yColumn">Y axis</label>
+                <select id="yColumn" name="yColumn"></select>
+
+                <label for="plotType">Plot type</label>
+                <select id="plotType" name="plotType">
+                    <option value="bar">Bar chart</option>
+                    <option value="line">Line chart</option>
+                    <option value="pie">Pie chart</option>
+                </select>
+
+                <button type="button" id="buildPlot">Build Plot</button>
+
+                <label for="plotTitle">Plot title</label>
+                <input type="text" id="plotTitle" name="plotTitle" placeholder="e.g. GPA vs Salary">
+
+            </form>
+        </div>
+
+
+        <!-- Правая колонка: график -->
+        <div class="plot-preview">
+            <h3>Preview</h3>
+            <img id="plotImage" src="" style="max-width: 100%; display: none;" />
+            <div id="downloadButtons" style="display: none; margin-top: 10px;">
+                <button class="action-button" onclick="downloadPlot('png')">Download PNG</button>
+                <button class="action-button" onclick="downloadPlot('jpeg')">Download JPEG</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/style-simple-plots.css') }}">
+<script src="{{ url_for('static', filename='scripts/simple_plots.js') }}"></script>
+{% endblock %}

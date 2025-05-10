@@ -27,7 +27,7 @@
                 <a href="#">Plots</a>
                 <div class="dropdown">
                     <ul>
-                        <li><a href="#">Simple plots</a></li>
+                        <li><a href="/simple-plots">Simple plots</a></li>
                         <li><a href="#">Dashboards</a></li>
                     </ul>
                 </div>
@@ -45,13 +45,13 @@
         </nav>
         <div class="navbar-profile">
             <div class="profile-icon" onclick="toggleProfileMenu()">
-                <img src="{{ url_for('static', filename='avatars/' + user_avatar) }}" alt="Profile" class="navbar-avatar">
+                <img src="{{ url_for('static', filename='avatars/' + user_avatar) }}" alt="Profile" class="navbar-avatar avatar">
             </div>
 
             <div class="profile-menu" id="profileMenu">
                 <span class="close-btn" onclick="toggleProfileMenu()">×</span>
                 <div class="profile-header">
-                    <img src="{{ url_for('static', filename='avatars/' + user_avatar) }}" alt="Profile Picture" class="profile-picture">
+                    <img src="{{ url_for('static', filename='avatars/' + user_avatar) }}" alt="Profile Picture" class="profile-picture avatar">
                     <span class="profile-name">{{ user_name }}</span>
                 </div>
                 <hr class="profile-divider">
