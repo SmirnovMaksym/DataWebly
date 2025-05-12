@@ -20,6 +20,62 @@ plotFileInput.addEventListener('change', async () => {
     });
 
     uploadedFiles = Array.from(plotFileInput.files);
+
+
+    // Сброс предпросмотров
+    document.getElementById('filePreviewTable1').innerHTML = '';
+    document.getElementById('filePreviewTable2').innerHTML = '';
+
+    // Загрузить предпросмотр каждого файла
+    uploadedFiles.forEach(async (file, index) => {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const res = await fetch('/preview-data', {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await res.json();
+        if (data.preview) {
+            const target = index === 0
+                ? document.getElementById('filePreviewTable1')
+                : document.getElementById('filePreviewTable2');
+            renderPreviewTable(target, data.preview);
+        }
+    });
+
+    function renderPreviewTable(container, rows) {
+        if (!rows.length) {
+            container.innerHTML = '<p style="color: #aaa;">Empty file</p>';
+            return;
+        }
+
+        const table = document.createElement('table');
+        const thead = document.createElement('thead');
+        const headerRow = document.createElement('tr');
+        Object.keys(rows[0]).forEach(key => {
+            const th = document.createElement('th');
+            th.textContent = key;
+            headerRow.appendChild(th);
+        });
+        thead.appendChild(headerRow);
+        table.appendChild(thead);
+
+        const tbody = document.createElement('tbody');
+        rows.forEach(row => {
+            const tr = document.createElement('tr');
+            Object.values(row).forEach(val => {
+                const td = document.createElement('td');
+                td.textContent = val !== null && val !== undefined ? val : '';
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+        table.appendChild(tbody);
+        container.appendChild(table);
+    }
+
     plotFileNameDisplay.textContent = uploadedFiles.length > 0
         ? uploadedFiles.map(f => f.name).join(', ')
         : 'No files uploaded';

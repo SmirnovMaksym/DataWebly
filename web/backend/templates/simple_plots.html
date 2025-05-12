@@ -34,16 +34,15 @@
                     <option value="bar">Bar chart</option>
                     <option value="line">Line chart</option>
                     <option value="pie">Pie chart</option>
+                    <option value="scatter">Scatter plot</option>
                 </select>
 
                 <button type="button" id="buildPlot">Build Plot</button>
 
                 <label for="plotTitle">Plot title</label>
                 <input type="text" id="plotTitle" name="plotTitle" placeholder="e.g. GPA vs Salary">
-
             </form>
         </div>
-
 
         <!-- Правая колонка: график -->
         <div class="plot-preview">
@@ -53,6 +52,18 @@
                 <button class="action-button" onclick="downloadPlot('png')">Download PNG</button>
                 <button class="action-button" onclick="downloadPlot('jpeg')">Download JPEG</button>
             </div>
+        </div>
+    </div>
+
+    <!-- ПЕРЕМЕЩЁННЫЙ БЛОК: предпросмотр под основной панелью -->
+    <div class="file-preview-section">
+        <div class="file-preview" id="filePreview1">
+            <h4>Preview File 1</h4>
+            <div id="filePreviewTable1"></div>
+        </div>
+        <div class="file-preview" id="filePreview2">
+            <h4>Preview File 2</h4>
+            <div id="filePreviewTable2"></div>
         </div>
     </div>
 </section>

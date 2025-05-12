@@ -11,12 +11,20 @@ import matplotlib
 matplotlib.use('Agg')  # 🔧 ОБЯЗАТЕЛЬНО ДО ИМПОРТА pyplot
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+from flask import send_file, jsonify
+import pdfkit
+import tempfile
+from xhtml2pdf import pisa
+import tempfile
+
 
 
 # Добавляем корневую директорию проекта в sys.path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from data_cleaning import clean_data
+from insights_utils import generate_insights
+from plot_utils import build_plot as generate_plot
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
@@ -307,8 +315,6 @@ def get_plot_columns():
             'file2': list(dfs[1].columns)
         })
 
-from plot_utils import build_plot as generate_plot
-
 @app.route('/build-plot', methods=['POST'])
 def build_plot():
     try:
@@ -322,6 +328,60 @@ def build_plot():
     except Exception as e:
         return str(e), 500
 
+
+@app.route('/get-insights')
+def get_insights():
+    if 'user_name' not in session:
+        return redirect(url_for('login'))
+    return render_template('get_insights.html',
+                           user_name=session['user_name'],
+                           user_avatar=session.get('user_avatar', 'default-avatar.jpg'))
+
+@app.route('/analyze-insights', methods=['POST'])
+def analyze_insights():
+    if 'file' not in request.files:
+        return "No file provided", 400
+
+    file = request.files['file']
+    if file.filename.endswith('.csv'):
+        df = pd.read_csv(file)
+    else:
+        df = pd.read_excel(file)
+
+    try:
+        df = df.convert_dtypes()
+        df = df.copy()
+        for col in df.columns:
+            if df[col].dtype == 'string':
+                try:
+                    parsed = pd.to_datetime(df[col])
+                    if parsed.notnull().sum() > len(df) * 0.8:
+                        df[col] = parsed
+                except Exception:
+                    continue
+        return generate_insights(df)
+    except Exception as e:
+        return f"<p>Error processing file: {str(e)}</p>"
+
+@app.route('/download-insights-pdf', methods=['POST'])
+def download_insights_pdf():
+    data = request.get_json()
+    html_content = data.get('html')
+
+    if not html_content:
+        return jsonify({'error': 'No HTML provided'}), 400
+
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp_file:
+        pdf_path = tmp_file.name
+
+        # Преобразование HTML в PDF
+        with open(pdf_path, "w+b") as f:
+            pisa_status = pisa.CreatePDF(html_content, dest=f, link_callback=lambda uri, rel: os.path.join('static', uri.split('/')[-1]))
+
+        if pisa_status.err:
+            return jsonify({'error': 'PDF generation failed'}), 500
+
+        return send_file(pdf_path, mimetype='application/pdf', as_attachment=True, download_name='insights_report.pdf')
 
 
 if __name__ == '__main__':
