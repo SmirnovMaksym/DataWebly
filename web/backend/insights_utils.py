@@ -34,26 +34,58 @@ def generate_insights(df):
     outliers_html = "<div class='insight-box'><h3>🚨 Outliers & Anomalies</h3>"
     messages = []
     tables = []
+
+    # Анализ числовых колонок
     for col in numeric_df.columns:
         try:
             z = (numeric_df[col] - numeric_df[col].mean()) / numeric_df[col].std()
-            outliers = df[np.abs(z) > 3]
-            if not outliers.empty:
-                messages.append(f"<li>{len(outliers)} outliers in <b>{col}</b></li>")
-                tables.append(outliers[[col]].head(5).to_html(classes="insight-table"))
+            outliers = df[np.abs(z) > 3].copy()
+            outliers[col] = outliers[col].apply(lambda x: f'<span class="anomaly-type">{x}</span>')
+            outliers.index = outliers.index + 2
+            tables.append(f"<p><b>Outliers in {col}:</b></p>" + outliers[[col]].head(5).to_html(classes="insight-table",
+                                                                                                escape=False))
+            messages.append(f"<li>{len(outliers)} outliers detected in <b>{col}</b></li>")
 
-                # Boxplot
-                fig, ax = plt.subplots()
-                ax.boxplot(df[col].dropna())
-                ax.set_title(f"Outliers in {col}")
-                ax.set_ylabel(col)
-                img_path = save_plot(fig)
-                tables.append(f'<img src="{img_path}" class="insight-img">')
-
+            positives = numeric_df[col] > 0
+            negatives = numeric_df[col] < 0
+            if positives.mean() > 0.95 and (numeric_df[col] < 0).sum() > 0:
+                susp = df[df[col] < 0].copy()
+                susp[col] = susp[col].apply(lambda x: f'<span class="anomaly-type">{x}</span>')
+                susp.index = susp.index + 2
+                tables.append(f"<p><b>Negative values in {col}:</b></p>" + susp[[col]].to_html(classes="insight-table",
+                                                                                               escape=False))
+                messages.append(f"<li><b>{col}</b> is mostly positive, but contains negative values</li>")
         except Exception:
             continue
-    outliers_html += "<ul>" + "".join(messages) + "</ul>" if messages else "<p>No significant outliers.</p>"
-    outliers_html += "".join(tables)
+
+    # Анализ пропущених значень
+    for col in df.columns:
+        na_count = df[col].isna().sum()
+        if na_count > 0:
+            samples = df[df[col].isna()].head(5).copy()
+            samples[col] = samples[col].apply(lambda x: f'<span class="anomaly-type">—</span>')
+            samples.index = samples.index + 2
+            tables.append(f"<p><b>Missing in {col}:</b></p>" + samples.to_html(classes="insight-table", escape=False))
+            messages.append(f"<li><b>{col}</b> contains {len(samples)} missing values</li>")
+
+    # Аналіз змішаних типів
+    for col in df.columns:
+        if df[col].dtype == 'object':
+            parsed = pd.to_numeric(df[col], errors='coerce')
+            ratio = parsed.notnull().mean()
+            if ratio > 0.95 and ratio < 1:
+                bad_rows = df[parsed.isna()][[col]].head(5).copy()
+                bad_rows[col] = bad_rows[col].apply(lambda x: f'<span class="anomaly-type">{x}</span>')
+                bad_rows.index = bad_rows.index + 2
+                tables.append(f"<p><b>Invalid entries in {col}:</b></p>" + bad_rows.to_html(classes="insight-table",
+                                                                                            escape=False))
+                messages.append(f"<li><b>{col}</b> contains unexpected values (mostly numeric, but has text)</li>")
+
+    if messages:
+        outliers_html += "<ul>" + "".join(messages) + "</ul>" + "".join(tables)
+    else:
+        outliers_html += "<p>No anomalies or outliers detected.</p>"
+
     outliers_html += "</div>"
 
     # ——— Correlations ———

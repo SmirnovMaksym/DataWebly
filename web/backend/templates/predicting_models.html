@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Predicting Models - WebAnalyst{% endblock %}
+
+{% block content %}
+<section class="predict-section">
+    <h2>Build and evaluate predictive models</h2>
+    <p>📂 Upload a dataset (recommended: ≥ 100 rows). Rows with missing or invalid values will be removed automatically.</p>
+
+    <form id="modelForm" enctype="multipart/form-data">
+        <label>Upload dataset (CSV or XLSX):</label>
+        <input type="file" name="file" id="modelFile" accept=".csv,.xlsx">
+
+        <label for="modelType">Select model type:</label>
+        <select id="modelType">
+            <option value="linear">Linear Regression</option>
+            <option value="logistic">Logistic Regression</option>
+        </select>
+
+        <label for="targetColumn">Dependent variable (target):</label>
+        <select id="targetColumn"></select>
+
+        <div id="featuresContainer">
+            <p><b>Independent variables:</b></p>
+            <div id="featureCheckboxes" class="checkbox-group"></div>
+        </div>
+
+        <button type="submit">Build model</button>
+    </form>
+
+    <div id="modelResults"></div>
+</section>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/style-predicting-models.css') }}">
+<script src="{{ url_for('static', filename='scripts/predicting_models.js') }}"></script>
+{% endblock %}

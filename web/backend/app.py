@@ -8,7 +8,7 @@ import pandas as pd
 import io
 import uuid
 import matplotlib
-matplotlib.use('Agg')  # 🔧 ОБЯЗАТЕЛЬНО ДО ИМПОРТА pyplot
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from flask import send_file, jsonify
@@ -18,13 +18,13 @@ from xhtml2pdf import pisa
 import tempfile
 
 
-
 # Добавляем корневую директорию проекта в sys.path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from data_cleaning import clean_data
 from insights_utils import generate_insights
 from plot_utils import build_plot as generate_plot
+from ml_models import run_model
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
@@ -75,7 +75,7 @@ def login():
             session['user_id'] = user.id
             session['user_name'] = user.name
             session['user_avatar'] = user.avatar  # добавляем аватар в сессию
-            return redirect(url_for('dashboard'))
+            return redirect(url_for('welcome'))
 
         flash('Invalid email or password.')
         return redirect(url_for('index'))
@@ -88,15 +88,6 @@ def logout():
     session.pop('user_id', None)
     session.pop('user_name', None)
     flash('You have been logged out.')
-    return redirect(url_for('login'))
-
-# Страница пользователя после успешного входа
-@app.route('/dashboard')
-def dashboard():
-    if 'user_name' in session:
-        user_name = session['user_name']
-        user_avatar = session.get('user_avatar', 'default-avatar.jpg')  # используем аватар по умолчанию, если не найден
-        return render_template('dashboard.html', user_name=user_name, user_avatar=user_avatar)
     return redirect(url_for('login'))
 
 # Обработка регистрации
@@ -383,6 +374,84 @@ def download_insights_pdf():
 
         return send_file(pdf_path, mimetype='application/pdf', as_attachment=True, download_name='insights_report.pdf')
 
+@app.route('/dashboard')
+def dashboard():
+    if 'user_name' not in session:
+        return redirect(url_for('login'))
+    return render_template('dashboard.html',
+                           user_name=session['user_name'],
+                           user_avatar=session.get('user_avatar', 'default-avatar.jpg'))
+
+@app.route('/dashboard-parse', methods=['POST'])
+def dashboard_parse():
+    file = request.files['file']
+    df = pd.read_csv(file) if file.filename.endswith('.csv') else pd.read_excel(file)
+    df = df.dropna()
+    return jsonify({
+        'columns': df.columns.tolist(),
+        'data': df.to_dict(orient='records')
+    })
+
+@app.route('/dashboard-plot', methods=['POST'])
+def dashboard_plot():
+    data = request.get_json()
+    df = pd.DataFrame(data['data'])
+    x = data['x']
+    y = data['y']
+    plot_type = data['type']
+
+    plt.clf()
+    fig, ax = plt.subplots()
+
+    if plot_type == 'bar':
+        df.groupby(x)[y].sum().plot(kind='bar', ax=ax)
+    elif plot_type == 'line':
+        df.groupby(x)[y].sum().plot(kind='line', ax=ax)
+    elif plot_type == 'pie':
+        df.groupby(x)[y].sum().plot(kind='pie', y=None, ax=ax, autopct='%1.1f%%')
+        ax.set_ylabel("")
+    elif plot_type == 'scatter':
+        ax.scatter(df[x], df[y])
+
+    ax.set_title(f"{y} vs {x}")
+
+    img = io.BytesIO()
+    plt.tight_layout()
+    plt.savefig(img, format='png')
+    img.seek(0)
+    return send_file(img, mimetype='image/png')
+
+@app.route('/predicting-models')
+def predicting_models():
+    if 'user_name' not in session:
+        return redirect(url_for('login'))
+    return render_template('predicting_models.html',
+                           user_name=session['user_name'],
+                           user_avatar=session.get('user_avatar', 'default-avatar.jpg'))
+
+@app.route("/predicting-models-parse", methods=["POST"])
+def predicting_models_parse():
+    file = request.files['file']
+    df = pd.read_csv(file) if file.filename.endswith('.csv') else pd.read_excel(file)
+    return jsonify({
+        'columns': df.columns.tolist(),
+        'data': df.to_dict(orient='records')
+    })
+
+@app.route("/predicting-models-run", methods=["POST"])
+def predicting_models_run():
+    data = request.get_json()
+    html = run_model(data["type"], data["data"], data["target"], data["features"])
+    return html
+
+
+@app.route('/welcome')
+def welcome():
+    if 'user_name' not in session:
+        return redirect(url_for('login'))
+    return render_template('welcome.html',
+                           user_name=session['user_name'],
+                           user_avatar=session.get('user_avatar', 'default-avatar.jpg'))
 
 if __name__ == '__main__':
     app.run(debug=True)

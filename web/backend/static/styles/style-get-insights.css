@@ -173,3 +173,22 @@
 .insights-container button:hover {
     background-color: #4cae4c;
 }
+
+.insight-table td {
+    padding: 4px 8px;
+}
+
+.bad-value {
+    background-color: #c0392b;
+    color: white;
+    font-weight: bold;
+    padding: 2px 4px;
+    border-radius: 3px;
+}
+
+.anomaly-type {
+    background-color: #c0392b;
+    color: white;
+    padding: 2px 4px;
+    border-radius: 3px;
+}

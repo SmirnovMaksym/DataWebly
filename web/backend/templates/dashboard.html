@@ -1,10 +1,36 @@
 {% extends "base.html" %}
-
 {% block title %}Dashboard - WebAnalyst{% endblock %}
 
 {% block content %}
-    <section>
-        <h2>Your Analytics</h2>
-        <p>Здесь будет отображаться основная информация о платформе, графики и аналитика.</p>
-    </section>
+<section class="dashboard-section">
+    <h2>Create Your Dashboard</h2>
+
+    <div class="graph-control">
+        <form id="graphForm">
+            <label for="dashboardFile">Select file:</label>
+            <input type="file" id="dashboardFile" accept=".csv,.xlsx">
+
+            <label for="xAxis">X Axis:</label>
+            <select id="xAxis"></select>
+
+            <label for="yAxis">Y Axis:</label>
+            <select id="yAxis"></select>
+
+            <label for="graphType">Graph type:</label>
+            <select id="graphType">
+                <option value="bar">Bar</option>
+                <option value="line">Line</option>
+                <option value="pie">Pie</option>
+                <option value="scatter">Scatter</option>
+            </select>
+
+            <button type="submit">Add to Dashboard</button>
+        </form>
+    </div>
+
+    <div id="dashboardGrid" class="dashboard-grid"></div>
+</section>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/style-dashboard.css') }}">
+<script src="{{ url_for('static', filename='scripts/dashboard.js') }}"></script>
 {% endblock %}

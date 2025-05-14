@@ -11,7 +11,9 @@
 
     <header class="navbar">
         <div class="navbar-logo">
-            <img src="{{ url_for('static', filename='images/logo-letter.jpg') }}" alt="Logo">
+            <a href="/welcome">
+                <img src="{{ url_for('static', filename='images/logo-letter.jpg') }}" alt="Logo">
+            </a>
         </div>
         <nav class="navbar-sections">
             <div class="navbar-section">
@@ -28,19 +30,12 @@
                 <div class="dropdown">
                     <ul>
                         <li><a href="/simple-plots">Simple plots</a></li>
-                        <li><a href="#">Dashboards</a></li>
+                        <li><a href="/dashboard">Dashboards</a></li>
                     </ul>
                 </div>
             </div>
             <div class="navbar-section">
-                <a href="#">Predicting Model (Beta)</a>
-                <div class="dropdown">
-                    <ul>
-                        <li><a href="#">Bayes model</a></li>
-                        <li><a href="#">Linear regression</a></li>
-                        <li><a href="#">Logistic regression</a></li>
-                    </ul>
-                </div>
+                <a href="/predicting-models">Predicting models</a>
             </div>
         </nav>
         <div class="navbar-profile">

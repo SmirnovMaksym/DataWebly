@@ -1,0 +1,79 @@
+.dashboard-section {
+    padding: 30px;
+    max-width: 1200px;
+    margin: auto;
+    color: #ddd;
+}
+
+.graph-control {
+    margin-bottom: 30px;
+    background-color: #2e2e2e;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+#graphForm {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: flex-end;
+}
+
+#graphForm label {
+    flex: 0 0 100px;
+}
+
+#graphForm select,
+#graphForm input[type="file"] {
+    flex: 1 1 150px;
+    background-color: #444;
+    color: white;
+    border: 1px solid #666;
+    padding: 6px;
+    border-radius: 4px;
+}
+
+#graphForm button {
+    padding: 8px 16px;
+    background-color: #5cb85c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#dashboardGrid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: start;
+}
+
+.graph-card {
+    background-color: #1e1e1e;
+    border: 1px solid #444;
+    padding: 10px;
+    border-radius: 6px;
+    position: relative;
+    max-width: 400px;
+}
+
+.graph-card img {
+    width: 100%;
+    border-radius: 4px;
+}
+
+.remove-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: #c00;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    font-size: 14px;
+    cursor: pointer;
+}
