@@ -42,10 +42,6 @@ def clean_data(df, operations, selected_columns=None, date_column=None, missing_
             z_scores = (df[col] - mean) / std
             df = df[abs(z_scores) <= 3]
 
-    # Уніфікація назв колонок (нижній регістр, без пробілів)
-    if 'make_consistent_column_names' in operations:
-        df.columns = df.columns.str.strip().str.replace(' ', '_').str.lower()
-
     # Видалення рядків з відсутніми або порожніми значеннями у вказаних колонках
     if 'remove_missing_values' in operations and missing_columns:
         print("Removing rows with missing/invalid values in:", missing_columns)
@@ -74,6 +70,10 @@ def clean_data(df, operations, selected_columns=None, date_column=None, missing_
         # Якщо є невідповідні значення — повертаємо тільки їх
         if not inappropriate_rows.empty:
             df = inappropriate_rows
+
+    # Уніфікація назв колонок (нижній регістр, без пробілів)
+    if 'make_consistent_column_names' in operations:
+        df.columns = df.columns.str.strip().str.replace(' ', '_').str.lower()
 
     return df
 

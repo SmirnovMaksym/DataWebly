@@ -3,10 +3,44 @@
 {% block title %}Data Cleaning - WebAnalyst{% endblock %}
 
 {% block content %}
+<style>
+/* тимчасовий стиль, щоб дропдауни завжди були зверху */
+.dropdown-container {
+    position: relative;
+    z-index: 9999;
+}
+
+.dropdown-button {
+    position: relative;
+    z-index: 10000;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #2e2e2e;
+    border: 1px solid #555;
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 10px;
+    border-radius: 5px;
+    white-space: nowrap;
+    z-index: 10001;
+    top: 100%;
+    left: 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.dropdown-container:hover .dropdown-content {
+    display: block;
+}
+</style>
+
+
 <section class="data-cleaning-section">
     <div class="data-cleaning-container">
 
-        <!-- Ліва частина: зона завантаження файлів -->
+        <!-- ліва частина: завантаження файлу -->
         <div class="file-upload">
             <div class="file-drop-area" id="fileDropArea">
                 <span class="file-message">Drag & drop a file here or click to upload</span>
@@ -15,72 +49,65 @@
             <p id="fileNameDisplay" class="file-name">No file uploaded</p>
         </div>
 
-        <!-- Центральна частина: опції очищення даних -->
+        <!-- центральна частина: функції очищення -->
         <div class="data-cleaning-options">
-            <h3>Select Data Cleaning Functions</h3>
+            <h3>Select Cleaning Functions</h3>
             <form id="cleaningForm" enctype="multipart/form-data">
                 <ul>
-
-                    <!-- Опція: уніфікація назв колонок -->
+                    <!-- уніфікація назв колонок -->
                     <li class="cleaning-option">
                         <input type="checkbox" id="makeConsistentNames" name="cleaningFunction" value="make_consistent_column_names">
-                        <label for="makeConsistentNames">Make consistent column names (recommended)</label>
+                        <label for="makeConsistentNames">Make column names consistent</label>
                     </li>
 
-                    <!-- Опція: видалення пропущених значень -->
+                    <!-- видалення пропущених значень -->
                     <li class="cleaning-option">
                         <input type="checkbox" id="removeMissing" name="cleaningFunction" value="remove_missing_values">
                         <label for="removeMissing">Remove missing values</label>
-                        <div class="dropdown-container hidden" id="missingValueColumns">
-                            <button class="dropdown-button">Select columns</button>
+                        <div id="missingValueColumns" class="dropdown-container z3 hidden">
+                            <div class="dropdown-button">Select columns</div>
                             <div class="dropdown-content"></div>
                         </div>
                     </li>
 
-                    <!-- Опція: видалення дублікатів -->
+                    <!-- виявлення дублікатів -->
                     <li class="cleaning-option">
                         <input type="checkbox" id="detectDuplicates" name="cleaningFunction" value="detect_duplicates">
                         <label for="detectDuplicates">Detect duplicates</label>
-                        <div class="dropdown-container hidden" id="selectedColumns">
-                            <button class="dropdown-button">Select columns</button>
+                        <div id="selectedColumns" class="dropdown-container z2 hidden">
+                            <div class="dropdown-button">Select columns</div>
                             <div class="dropdown-content"></div>
                         </div>
                     </li>
 
-                    <!-- Опція: форматування дат -->
+                    <!-- виправлення дат -->
                     <li class="cleaning-option">
                         <input type="checkbox" id="fixDates" name="cleaningFunction" value="fix_dates">
-                        <label for="fixDates">Fix dates</label>
-                        <div class="dropdown-container hidden" id="dateColumn">
-                            <button class="dropdown-button">Select columns</button>
+                        <label for="fixDates">Fix date formats</label>
+                        <div id="dateColumn" class="dropdown-container z1 hidden">
+                            <div class="dropdown-button">Select column</div>
                             <div class="dropdown-content"></div>
                         </div>
                     </li>
 
-                    <!-- Опція: виявлення невідповідних типів -->
+                    <!-- невідповідні значення -->
                     <li class="cleaning-option">
                         <input type="checkbox" id="detectInappropriateValues" name="cleaningFunction" value="detect_inappropriate_values">
                         <label for="detectInappropriateValues">Detect inappropriate values</label>
                     </li>
 
-                    <!-- Опція: виявлення викидів -->
+                    <!-- викиди -->
                     <li class="cleaning-option">
                         <input type="checkbox" id="detectOutliers" name="cleaningFunction" value="detect_outliers">
-                        <label for="detectOutliers">Detect outliers</label>
-                    </li>
-
-                    <!-- Опція: виправлення типів даних -->
-                    <li class="cleaning-option">
-                        <input type="checkbox" id="fixDataTypes" name="cleaningFunction" value="fix_data_types">
-                        <label for="fixDataTypes">Fix data types</label>
+                        <label for="detectOutliers">Remove outliers</label>
                     </li>
                 </ul>
             </form>
         </div>
 
-        <!-- Права частина: кнопки запуску та прогрес-бар -->
+        <!-- права частина: кнопки та прогрес -->
         <div class="actions">
-            <button id="startProcess" class="action-button">Start Data Cleaning</button>
+            <button id="startProcess" class="action-button">Start Cleaning</button>
             <button id="downloadFile" class="action-button disabled" disabled>Download Cleaned File</button>
             <div class="progress-bar-container">
                 <div class="progress-bar" id="progressBar">
@@ -91,11 +118,10 @@
         </div>
     </div>
 
-    <!-- Контейнер для відображення таблиці -->
+    <!-- контейнер для таблиць -->
     <div id="tableContainer" class="table-container"></div>
 </section>
 
-<!-- Підключення стилів та скриптів -->
 <link rel="stylesheet" href="{{ url_for('static', filename='styles/style-data-cleaning.css') }}">
 <script src="{{ url_for('static', filename='scripts/data_cleaning.js') }}"></script>
 {% endblock %}

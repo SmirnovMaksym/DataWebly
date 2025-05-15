@@ -194,6 +194,7 @@ def data_cleaning():
     return redirect(url_for('login'))
 
 # Обробка завантаженого файлу та виконання очищення
+# Обробка завантаженого файлу та виконання очищення
 @app.route('/process-data', methods=['POST'])
 def process_data():
     if 'file' not in request.files:
@@ -203,39 +204,43 @@ def process_data():
     if file.filename == '':
         return jsonify({'error': 'No selected file'})
 
-    # Зчитування даних з CSV або Excel
-    file_stream = io.BytesIO(file.read())
-    if file.filename.endswith('.csv'):
-        df = pd.read_csv(file_stream)
-    else:
-        df = pd.read_excel(file_stream)
+    try:
+        # Зчитування даних з CSV або Excel
+        file_stream = io.BytesIO(file.read())
+        if file.filename.endswith('.csv'):
+            df = pd.read_csv(file_stream)
+        else:
+            df = pd.read_excel(file_stream)
 
-    preview_df = df.head(10)
+        preview_df = df.head(10)
 
-    # Збір обраних користувачем операцій
-    operations = request.form.getlist('cleaningFunction')
-    selected_columns = request.form.getlist('selectedColumns')
-    date_column = request.form.get('dateColumn')
-    missing_columns = request.form.getlist('missingValueColumns')
+        # Збір обраних користувачем операцій
+        operations = request.form.getlist('cleaningFunction')
+        selected_columns = request.form.getlist('selectedColumns[]')  # Змінено отримання списку
+        date_column = request.form.get('dateColumn[]')  # Змінено отримання одного значення
+        missing_columns = request.form.getlist('missingValueColumns[]')  # Змінено отримання списку
 
-    # Очищення даних
-    cleaned_df = clean_data(df, operations, selected_columns, date_column, missing_columns)
+        # Очищення даних
+        cleaned_df = clean_data(df.copy(), operations, selected_columns, date_column, missing_columns)  # Передаємо копію DataFrame
 
-    # Збереження результату у тимчасовий CSV
-    file_id = str(uuid.uuid4())
-    file_path = os.path.join(app.config['TEMP_FOLDER'], f'{file_id}.csv')
-    cleaned_df.to_csv(file_path, index=False)
+        # Збереження результату у тимчасовий CSV
+        file_id = str(uuid.uuid4())
+        file_path = os.path.join(app.config['TEMP_FOLDER'], f'{file_id}.csv')
+        cleaned_df.to_csv(file_path, index=False)
 
-    # Конвертація у JSON для перегляду
-    def safe_json(df):
-        return df.where(pd.notnull(df), None).to_dict(orient='records')
+        # Конвертація у JSON для перегляду
+        def safe_json(df):
+            return df.where(pd.notnull(df), None).to_dict(orient='records')
 
-    return jsonify({
-        'status': 'success',
-        'preview': safe_json(preview_df),
-        'cleaned_preview': safe_json(cleaned_df.head(10)),
-        'file_id': file_id
-    })
+        return jsonify({
+            'status': 'success',
+            'preview': safe_json(preview_df),
+            'cleaned_preview': safe_json(cleaned_df.head(10)),
+            'file_id': file_id
+        })
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 # Завантаження очищеного файлу
 @app.route('/download-cleaned-file/<file_id>', methods=['GET'])
