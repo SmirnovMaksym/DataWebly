@@ -4,32 +4,40 @@
 {% block content %}
 <section class="predict-section">
     <h2>Build and evaluate predictive models</h2>
-    <p>📂 Upload a dataset (recommended: ≥ 100 rows). Rows with missing or invalid values will be removed automatically.</p>
+    <p>Upload a dataset (recommended: ≥ 100 rows). Rows with missing or invalid values will be removed automatically.</p>
 
     <form id="modelForm" enctype="multipart/form-data">
+
+        <!-- Завантаження датасету -->
         <label>Upload dataset (CSV or XLSX):</label>
         <input type="file" name="file" id="modelFile" accept=".csv,.xlsx">
 
+        <!-- Вибір типу моделі -->
         <label for="modelType">Select model type:</label>
         <select id="modelType">
             <option value="linear">Linear Regression</option>
             <option value="logistic">Logistic Regression</option>
         </select>
 
+        <!-- Вибір цільової змінної -->
         <label for="targetColumn">Dependent variable (target):</label>
         <select id="targetColumn"></select>
 
+        <!-- Вибір незалежних змінних -->
         <div id="featuresContainer">
             <p><b>Independent variables:</b></p>
             <div id="featureCheckboxes" class="checkbox-group"></div>
         </div>
 
+        <!-- Кнопка запуску моделі -->
         <button type="submit">Build model</button>
     </form>
 
+    <!-- Блок для результатів моделі -->
     <div id="modelResults"></div>
 </section>
 
+<!-- Підключення стилів і скриптів -->
 <link rel="stylesheet" href="{{ url_for('static', filename='styles/style-predicting-models.css') }}">
 <script src="{{ url_for('static', filename='scripts/predicting_models.js') }}"></script>
 {% endblock %}

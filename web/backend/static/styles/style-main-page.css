@@ -1,4 +1,3 @@
-/* Общий стиль */
 body {
     margin: 0;
     padding: 0;
@@ -7,7 +6,6 @@ body {
     color: white;
 }
 
-/* Навигационная панель */
 .navbar {
     display: flex;
     justify-content: space-between;
@@ -22,7 +20,6 @@ body {
     display: block;
 }
 
-/* Секции навигации */
 .navbar-sections {
     display: flex;
 }
@@ -59,32 +56,27 @@ body {
     display: block;
 }
 
-/* Убираем точки перед текстом в списке подсекций */
 .navbar-section .dropdown ul {
-    list-style: none; /* Убираем маркеры (точки) перед списком */
+    list-style: none;
     padding: 0;
     margin: 0;
 }
 
-/* Убираем треугольник для подсекций */
 .navbar-section .dropdown ul li a::after {
-    content: none; /* Убираем символ треугольника */
+    content: none;
 }
 
-/* Стили для ссылок подсекций */
 .navbar-section .dropdown ul li a {
-    padding: 8px 15px; /* Немного увеличиваем отступ для лучшего вида */
+    padding: 8px 15px;
     display: block;
-    color: white; /* Цвет текста подсекций */
-    text-decoration: none; /* Убираем подчеркивание */
+    color: white;
+    text-decoration: none;
 }
 
-/* Смена цвета при наведении на подсекцию */
 .navbar-section .dropdown ul li a:hover {
-    background-color: #4a4a4a; /* Затемнение фона при наведении */
+    background-color: #4a4a4a;
 }
 
-/* Профиль */
 .navbar-profile {
     position: relative;
 }
@@ -94,7 +86,6 @@ body {
     cursor: pointer;
 }
 
-/* Меню профиля */
 .profile-menu {
     position: fixed;
     right: -300px;
@@ -155,7 +146,6 @@ body {
     background-color: #3a3a3a;
 }
 
-/* Кнопка закрытия меню (крестик) */
 .close-btn {
     position: absolute;
     top: 10px;

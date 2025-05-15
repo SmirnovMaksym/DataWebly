@@ -1,4 +1,3 @@
-/* Основной контейнер для секции Data Cleaning */
 .data-cleaning-section {
     display: flex;
     justify-content: space-around;
@@ -12,7 +11,6 @@
     width: 100%;
 }
 
-/* Зона загрузки файлов */
 .file-upload {
     flex: 1;
     margin-right: 20px;
@@ -46,7 +44,6 @@
     color: #ddd;
 }
 
-/* Опции для очистки данных */
 .data-cleaning-options {
     flex: 1;
     padding: 0 20px;
@@ -63,7 +60,6 @@
     font-size: 16px;
 }
 
-/* Информация (tooltip) */
 .info-icon {
     margin-left: 10px;
     color: #888;
@@ -92,7 +88,6 @@
     box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
 
-/* Правая часть: кнопки и прогресс-бар */
 .actions {
     flex: 1;
     text-align: center;
@@ -159,50 +154,45 @@
     border-radius: 5px;
 }
 
-/* Контейнер для таблицы */
 .table-container {
     margin-top: 40px;
     width: 100%;
     overflow-x: auto;
     padding: 10px;
-    background-color: #2b2b2b;  /* Фон контейнера таблицы для контраста */
+    background-color: #2b2b2b;
     border-radius: 10px;
 }
 
-/* Таблица */
 .data-table {
     width: 100%;
     border-collapse: collapse;
     border-spacing: 0;
-    background-color: #3a3a3a;  /* Фон для таблицы */
-    color: #fff;  /* Белый текст */
+    background-color: #3a3a3a;
+    color: #fff;
 }
 
-/* Ячейки заголовков */
 .data-table th {
     padding: 10px;
-    border: 1px solid #444;  /* Более тонкая линия */
+    border: 1px solid #444;
     text-align: left;
-    background-color: #444;  /* Тёмный фон заголовков */
+    background-color: #444;
     font-weight: bold;
 }
 
-/* Ячейки данных */
 .data-table td {
     padding: 10px;
     border: 1px solid #615151;
     text-align: left;
     white-space: nowrap;
-    color: #ccc;  /* Лёгкий серый текст для данных */
+    color: #ccc;
 }
 
-/* Чередование строк */
 .data-table tr:nth-child(even) {
-    background-color: #555;  /* Чередование фона строк для лучшей видимости */
+    background-color: #555;
 }
 
 .data-table tr:hover {
-    background-color: #666;  /* Подсветка строки при наведении */
+    background-color: #666;
 }
 
 
@@ -228,35 +218,51 @@
     align-items: center;
     gap: 10px;
     margin-bottom: 8px;
-    flex-wrap: nowrap;              /* Не переносим на новую строку */
+    flex-wrap: nowrap;
 }
 
 .cleaning-option > label {
     white-space: nowrap;
 }
 
-.inline-select {
-    height: 28px;
-    max-width: 150px;
-    background-color: #2b2b2b;
-    color: white;
-    border: 1px solid #555;
-    border-radius: 4px;
-    padding: 2px 6px;
-    font-size: 14px;
-    flex-shrink: 0;                /* Не сжимается */
-    margin-left: auto;            /* Прижимает к правому краю */
+.dropdown-container {
+    position: relative;
+    display: inline-block;
+    margin-left: 6px;
+    min-width: 150px;
 }
 
-.column-select {
-    height: 60px;         /* компактная высота */
-    max-width: 160px;
+.dropdown-button {
     background-color: #2b2b2b;
     color: white;
+    padding: 6px 10px;
     border: 1px solid #555;
     border-radius: 4px;
-    padding: 2px 6px;
+    cursor: pointer;
     font-size: 14px;
 }
 
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #2e2e2e;
+    border: 1px solid #555;
+    z-index: 1;
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 10px;
+    border-radius: 5px;
+    white-space: nowrap;
+}
+
+.dropdown-container:hover .dropdown-content {
+    display: block;
+}
+
+.dropdown-content label {
+    display: block;
+    color: white;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
 

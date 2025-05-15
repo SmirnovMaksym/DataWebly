@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign in to WebAnalyst</title>
+    <!-- Підключення стилів для форм входу та реєстрації -->
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/style-login-register.css') }}">
 </head>
 <body>
 
-
-
+<!-- Форма входу -->
 <div class="form-container" id="loginForm">
     <h2>Sign in to WebAnalyst</h2>
     <form method="POST" action="/login">
@@ -29,11 +29,11 @@
         <p>New to WebAnalyst? <a href="#" onclick="showRegister()">Create an account</a></p>
     </div>
 </div>
-    
 
-
+<!-- Сховане поле для перемикання між формами -->
 <input type="hidden" id="showRegister" value="{{ 'true' if show_register else 'false' }}">
 
+<!-- Форма реєстрації -->
 <div class="form-container" id="registerForm" style="display: none;">
     <h2>Create Account</h2>
     <form method="POST" action="/register" onsubmit="return checkPasswords()">
@@ -64,6 +64,7 @@
     </div>
 </div>
 
+<!-- Підключення JavaScript для перемикання форм -->
 <script src="{{ url_for('static', filename='scripts/scripts.js') }}"></script>
 
 </body>

@@ -1,43 +1,52 @@
 {% extends "base.html" %}
-{% block title %}Ласкаво просимо - WebAnalyst{% endblock %}
+{% block title %}Welcome - WebAnalyst{% endblock %}
 
 {% block content %}
 <section class="welcome-section">
-    <h2>Ласкаво просимо до WebAnalyst!</h2>
-    <p>Платформа для швидкого аналізу та обробки табличних даних.</p>
+    <h2>Welcome to WebAnalyst!</h2>
+    <p>A platform for fast analysis and processing of tabular data.</p>
 
+    <!-- Сітка з основними секціями платформи -->
     <div class="welcome-grid">
+
+        <!-- Секція: Data Cleaning -->
         <div class="welcome-card">
-            <h3>🧹 Data Cleaning</h3>
-            <p>Завантажте датасет та виконайте очищення: уніфікація назв колонок, фільтрація дублікатів, форматування дат, видалення відсутніх значень.</p>
-            <a href="/data-cleaning">Перейти</a>
+            <h3>Data Cleaning</h3>
+            <p>Upload your dataset and perform cleaning: column name normalization, duplicate filtering, date formatting, missing value removal.</p>
+            <a href="/data-cleaning">Go to section</a>
         </div>
 
+        <!-- Секція: Get Insights -->
         <div class="welcome-card">
-            <h3>🔍 Get Insights</h3>
-            <p>Автоматичне виявлення статистичних закономірностей, кореляцій, трендів, аномалій. Інтерпретація результатів та побудова графіків.</p>
-            <a href="/get-insights">Перейти</a>
+            <h3>Get Insights</h3>
+            <p>Automatically detect statistical patterns, correlations, trends, and anomalies. Get interpretations and visual reports.</p>
+            <a href="/get-insights">Go to section</a>
         </div>
 
+        <!-- Секція: Simple Plots -->
         <div class="welcome-card">
-            <h3>📊 Simple Plots</h3>
-            <p>Швидке створення графіків на основі одного або кількох датасетів: гістограми, лінійні графіки, кругові діаграми, точкові графіки.</p>
-            <a href="/simple-plots">Перейти</a>
+            <h3>Simple Plots</h3>
+            <p>Quickly create charts based on one or more datasets: bar, line, pie, or scatter plots.</p>
+            <a href="/simple-plots">Go to section</a>
         </div>
 
+        <!-- Секція: Dashboards -->
         <div class="welcome-card">
-            <h3>📋 Dashboards</h3>
-            <p>Комбінуйте кілька графіків з різних файлів в єдину панель. Вибирайте графіки, змінюйте макет, створюйте власний аналітичний дашборд.</p>
-            <a href="/dashboard">Перейти</a>
+            <h3>Dashboards</h3>
+            <p>Combine multiple charts from different files into a single dashboard. Choose chart types, adjust layout, and build custom analytics views.</p>
+            <a href="/dashboard">Go to section</a>
         </div>
 
+        <!-- Секція: Predicting Models -->
         <div class="welcome-card">
-            <h3>🤖 Predicting Models</h3>
-            <p>Побудова моделей (лінійна та логістична регресія). Автоматичне оцінювання якості, фільтрація непотрібних ознак, вивід графіків та метрик.</p>
-            <a href="/predicting-models">Перейти</a>
+            <h3>Predicting Models</h3>
+            <p>Build linear or logistic regression models. Automatically evaluate model quality, filter irrelevant features, and view plots and metrics.</p>
+            <a href="/predicting-models">Go to section</a>
         </div>
+
     </div>
 </section>
 
+<!-- Підключення стилів для welcome-сторінки -->
 <link rel="stylesheet" href="{{ url_for('static', filename='styles/style-welcome.css') }}">
 {% endblock %}

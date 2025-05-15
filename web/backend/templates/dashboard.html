@@ -5,17 +5,22 @@
 <section class="dashboard-section">
     <h2>Create Your Dashboard</h2>
 
+    <!-- Форма для вибору файлу та параметрів графіка -->
     <div class="graph-control">
         <form id="graphForm">
+            <!-- Завантаження файлу -->
             <label for="dashboardFile">Select file:</label>
             <input type="file" id="dashboardFile" accept=".csv,.xlsx">
 
+            <!-- Вибір осі X -->
             <label for="xAxis">X Axis:</label>
             <select id="xAxis"></select>
 
+            <!-- Вибір осі Y -->
             <label for="yAxis">Y Axis:</label>
             <select id="yAxis"></select>
 
+            <!-- Вибір типу графіка -->
             <label for="graphType">Graph type:</label>
             <select id="graphType">
                 <option value="bar">Bar</option>
@@ -24,13 +29,16 @@
                 <option value="scatter">Scatter</option>
             </select>
 
+            <!-- Кнопка додавання графіка до дашборду -->
             <button type="submit">Add to Dashboard</button>
         </form>
     </div>
 
+    <!-- Контейнер для відображення графіків -->
     <div id="dashboardGrid" class="dashboard-grid"></div>
 </section>
 
+<!-- Підключення стилів та JavaScript -->
 <link rel="stylesheet" href="{{ url_for('static', filename='styles/style-dashboard.css') }}">
 <script src="{{ url_for('static', filename='scripts/dashboard.js') }}"></script>
 {% endblock %}

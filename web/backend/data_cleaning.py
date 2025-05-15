@@ -4,14 +4,18 @@ import re
 from dateutil import parser
 
 def clean_data(df, operations, selected_columns=None, date_column=None, missing_columns=None):
+    """
+    Функція для обробки даних залежно від обраних користувачем операцій.
 
+    :param df: DataFrame з даними
+    :param operations: Список операцій, які обрав користувач
+    :param selected_columns: Стовпці, обрані для видалення дублікатів
+    :param date_column: Стовпець з датами для форматування
+    :param missing_columns: Стовпці для обробки відсутніх значень
+    :return: Очищений DataFrame
     """
-    Функция для обработки данных в зависимости от выбранных пользователем операций.
-    
-    :param df: DataFrame с данными.
-    :param operations: Список операций, которые выбрал пользователь.
-    :return: Очищенный DataFrame.
-    """
+
+    # Видалення дублікатів (повністю або по вибраних колонках)
     if 'detect_duplicates' in operations:
         print("Detecting duplicates...")
         if selected_columns:
@@ -19,6 +23,7 @@ def clean_data(df, operations, selected_columns=None, date_column=None, missing_
         else:
             df = df.drop_duplicates()
 
+    # Виправлення форматів дат у вказаному стовпці
     if 'fix_dates' in operations and date_column:
         print(f"Fixing dates in column {date_column}...")
         try:
@@ -26,27 +31,32 @@ def clean_data(df, operations, selected_columns=None, date_column=None, missing_
         except Exception as e:
             print(f"Date conversion error: {e}")
 
+    # Видалення викидів на основі Z-оцінки (правило 3 сигм)
     if 'detect_outliers' in operations:
         print("Detecting outliers...")
-        # Пример логики для поиска выбросов
 
-    if 'fix_data_types' in operations:
-        print("Fixing data types...")
-        # Пример логики для исправления типов данных
+        numeric_cols = df.select_dtypes(include=[np.number]).columns
+        for col in numeric_cols:
+            mean = df[col].mean()
+            std = df[col].std()
+            z_scores = (df[col] - mean) / std
+            df = df[abs(z_scores) <= 3]
 
+    # Уніфікація назв колонок (нижній регістр, без пробілів)
     if 'make_consistent_column_names' in operations:
         df.columns = df.columns.str.strip().str.replace(' ', '_').str.lower()
 
+    # Видалення рядків з відсутніми або порожніми значеннями у вказаних колонках
     if 'remove_missing_values' in operations and missing_columns:
         print("Removing rows with missing/invalid values in:", missing_columns)
 
-        # Обновляем только нужные колонки
+        # Очищення лише зазначених колонок
         for col in missing_columns:
             df[col] = df[col].apply(lambda x: np.nan if is_effectively_empty(x) else x)
 
         df = df.dropna(subset=missing_columns)
 
-    # Обработка inappropriate values
+    # Виявлення колонок зі змішаними типами значень
     if 'detect_inappropriate_values' in operations:
         print("Detecting inappropriate values...")
         inappropriate_rows = pd.DataFrame()
@@ -61,12 +71,13 @@ def clean_data(df, operations, selected_columns=None, date_column=None, missing_
                 temp['__issue_column__'] = col
                 inappropriate_rows = pd.concat([inappropriate_rows, temp], ignore_index=True)
 
+        # Якщо є невідповідні значення — повертаємо тільки їх
         if not inappropriate_rows.empty:
-            df = inappropriate_rows  # возвращаем только неподходящие строки для отображения
+            df = inappropriate_rows
 
     return df
 
-
+# Безпечне перетворення тексту у дату
 def parse_date_safely(date_str):
     try:
         parsed = parser.parse(str(date_str), fuzzy=True)
@@ -74,7 +85,7 @@ def parse_date_safely(date_str):
     except Exception:
         return None
 
-
+# Перевірка, чи значення є порожнім або некоректним
 def is_effectively_empty(value):
     if pd.isnull(value):
         return True

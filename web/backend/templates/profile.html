@@ -5,43 +5,46 @@
 {% block content %}
 <section class="profile-section">
     <h2>User Profile</h2>
+
     <form id="profileForm" method="POST" action="/update-profile" enctype="multipart/form-data">
-        <!-- Имя пользователя -->
+
+        <!-- Ім’я користувача -->
         <div class="form-group">
             <label for="username">Name</label>
             <input type="text" id="username" name="username" value="{{ user_name }}" required>
         </div>
 
-        <!-- Аватар пользователя -->
+        <!-- Завантаження аватара -->
         <div class="form-group">
             <label for="avatar">Avatar</label>
             <input type="file" id="avatar" name="avatar">
             <img src="{{ url_for('static', filename='avatars/' + user_avatar) }}" alt="Current Avatar" class="profile-avatar avatar">
         </div>
 
-        <!-- Bio пользователя -->
+        <!-- Біографія користувача -->
         <div class="form-group">
             <label for="bio">Bio</label>
             <textarea id="bio" name="bio" rows="4" placeholder="Tell us about yourself...">{{ user_bio }}</textarea>
         </div>
 
-        <!-- Страна пользователя -->
+        <!-- Країна користувача -->
         <div class="form-group">
             <label for="country">Country</label>
             <input type="text" id="country" name="country" value="{{ user_country }}" placeholder="Your country">
         </div>
 
-        <!-- LinkedIn пользователя -->
+        <!-- Посилання на LinkedIn -->
         <div class="form-group">
             <label for="linkedin">LinkedIn</label>
             <input type="url" id="linkedin" name="linkedin" value="{{ user_linkedin or '' }}" placeholder="LinkedIn">
         </div>
 
-        <!-- Кнопка для сохранения изменений -->
+        <!-- Кнопка збереження змін -->
         <button type="submit" class="action-button">Save Changes</button>
     </form>
 </section>
 
+<!-- Підключення скрипту та стилів профілю -->
 <script src="{{ url_for('static', filename='scripts/profile.js') }}"></script>
 <link rel="stylesheet" href="{{ url_for('static', filename='styles/style-profile.css') }}">
 {% endblock %}

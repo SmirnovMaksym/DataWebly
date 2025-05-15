@@ -7,16 +7,19 @@
     <div class="insights-container">
         <h2>Upload your dataset to get insights</h2>
 
-            <form id="insightsForm" enctype="multipart/form-data" style="display: flex; gap: 10px; align-items: center;">
-                <input type="file" id="insightsFile" name="file" accept=".csv,.xlsx">
-                <button type="submit">Analyze</button>
-                <button type="button" id="downloadPdfBtn" style="display: none;">📄 Download PDF</button>
-            </form>
+        <!-- Форма завантаження та запуску аналізу -->
+        <form id="insightsForm" enctype="multipart/form-data" style="display: flex; gap: 10px; align-items: center;">
+            <input type="file" id="insightsFile" name="file" accept=".csv,.xlsx">
+            <button type="submit">Analyze</button>
+            <button type="button" id="downloadPdfBtn" style="display: none;">Download PDF</button>
+        </form>
 
+        <!-- Контейнер для результатів аналізу -->
         <div id="insightsResult" style="margin-top: 40px;"></div>
     </div>
 </section>
 
+<!-- Підключення стилів та скриптів для секції Insights -->
 <link rel="stylesheet" href="{{ url_for('static', filename='styles/style-get-insights.css') }}">
 <script src="{{ url_for('static', filename='scripts/get_insights.js') }}"></script>
 {% endblock %}

@@ -1,3 +1,4 @@
+// Отримуємо основні DOM-елементи
 const plotFileInput = document.getElementById('plotFileInput');
 const plotFileNameDisplay = document.getElementById('plotFileNameDisplay');
 const buildPlotButton = document.getElementById('buildPlot');
@@ -13,20 +14,20 @@ const mergeLabel2 = document.getElementById('mergeLabel2');
 
 let uploadedFiles = [];
 
+// Обробка завантаження файлів
 plotFileInput.addEventListener('change', async () => {
-    // Сброс — скрываем всё
+    // Ховаємо всі поля перед новим вибором
     [mergeLeft, mergeRight, mergeLabel1, mergeLabel2, xColumn, yColumn, plotType, plotTitle].forEach(el => {
         if (el) el.classList.add('hidden');
     });
 
     uploadedFiles = Array.from(plotFileInput.files);
 
-
-    // Сброс предпросмотров
+    // Очищаємо попередній перегляд
     document.getElementById('filePreviewTable1').innerHTML = '';
     document.getElementById('filePreviewTable2').innerHTML = '';
 
-    // Загрузить предпросмотр каждого файла
+    // Відображення попереднього перегляду даних з кожного файлу
     uploadedFiles.forEach(async (file, index) => {
         const formData = new FormData();
         formData.append('file', file);
@@ -45,6 +46,7 @@ plotFileInput.addEventListener('change', async () => {
         }
     });
 
+    // Функція для рендеру таблиці попереднього перегляду
     function renderPreviewTable(container, rows) {
         if (!rows.length) {
             container.innerHTML = '<p style="color: #aaa;">Empty file</p>';
@@ -76,12 +78,14 @@ plotFileInput.addEventListener('change', async () => {
         container.appendChild(table);
     }
 
+    // Показуємо назви завантажених файлів
     plotFileNameDisplay.textContent = uploadedFiles.length > 0
         ? uploadedFiles.map(f => f.name).join(', ')
         : 'No files uploaded';
 
     if (uploadedFiles.length === 0) return;
 
+    // Отримуємо доступні колонки з сервера
     const formData = new FormData();
     uploadedFiles.forEach(file => formData.append('files', file));
 
@@ -102,6 +106,7 @@ plotFileInput.addEventListener('change', async () => {
         mergeLabel1.classList.add('hidden');
         mergeLabel2.classList.add('hidden');
     } else if (data.file1 && data.file2) {
+        // Підготовка до злиття двох файлів
         populateSelect(mergeLeft, data.file1);
         populateSelect(mergeRight, data.file2);
         populateSelect(xColumn, [...new Set([...data.file1, ...data.file2])]);
@@ -109,12 +114,13 @@ plotFileInput.addEventListener('change', async () => {
 
         [mergeLeft, mergeRight, mergeLabel1, mergeLabel2, xColumn, yColumn, plotType, plotTitle].forEach(el => el.classList.remove('hidden'));
 
-        // Обновить названия файлов в лейблах
+        // Підпис до колонок злиття
         mergeLabel1.textContent = `Merge on column (${uploadedFiles[0].name})`;
         mergeLabel2.textContent = `Merge on column (${uploadedFiles[1].name})`;
     }
 });
 
+// Заповнення елементів <select> значеннями колонок
 function populateSelect(selectEl, columns) {
     selectEl.innerHTML = '';
     columns.forEach(col => {
@@ -123,6 +129,7 @@ function populateSelect(selectEl, columns) {
     });
 }
 
+// Обробка натискання кнопки побудови графіку
 buildPlotButton.addEventListener('click', async () => {
     if (uploadedFiles.length === 0) {
         alert("Please upload at least one file");
@@ -130,7 +137,7 @@ buildPlotButton.addEventListener('click', async () => {
     }
 
     if (!plotTitle.value) {
-    plotTitle.value = `${xColumn.value} vs ${yColumn.value}`;
+        plotTitle.value = `${xColumn.value} vs ${yColumn.value}`;
     }
 
     const formData = new FormData();
@@ -157,7 +164,7 @@ buildPlotButton.addEventListener('click', async () => {
     }
 });
 
-
+// Завантаження зображення графіку у заданому форматі
 function downloadPlot(format) {
     if (!plotImage.src) return;
 

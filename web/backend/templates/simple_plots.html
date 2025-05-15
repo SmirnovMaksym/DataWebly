@@ -5,30 +5,34 @@
 {% block content %}
 <section class="simple-plots-section">
     <div class="plot-container">
-        <!-- Левая колонка: загрузка -->
+
+        <!-- Ліва колонка: завантаження файлів -->
         <div class="plot-upload">
             <h3>Upload files (max: 2)</h3>
-            <label for="plotFileInput" class="custom-file-label">📂 Choose files</label>
+            <label for="plotFileInput" class="custom-file-label">Choose files</label>
             <input type="file" id="plotFileInput" multiple accept=".csv,.xlsx" class="hidden-input">
             <p id="plotFileNameDisplay">No files uploaded</p>
         </div>
 
-        <!-- Центр: настройки -->
+        <!-- Центральна колонка: налаштування графіка -->
         <div class="plot-settings">
             <h3>Plot Settings</h3>
             <form id="plotForm">
+                <!-- Вибір колонок для злиття -->
                 <label id="mergeLabel1" for="mergeLeft" class="hidden">Merge on column (File 1)</label>
                 <select id="mergeLeft" name="mergeLeft" class="hidden"></select>
 
                 <label id="mergeLabel2" for="mergeRight" class="hidden">Merge on column (File 2)</label>
                 <select id="mergeRight" name="mergeRight" class="hidden"></select>
 
+                <!-- Вибір осей -->
                 <label for="xColumn">X axis</label>
                 <select id="xColumn" name="xColumn"></select>
 
                 <label for="yColumn">Y axis</label>
                 <select id="yColumn" name="yColumn"></select>
 
+                <!-- Вибір типу графіка -->
                 <label for="plotType">Plot type</label>
                 <select id="plotType" name="plotType">
                     <option value="bar">Bar chart</option>
@@ -39,12 +43,13 @@
 
                 <button type="button" id="buildPlot">Build Plot</button>
 
+                <!-- Заголовок графіка -->
                 <label for="plotTitle">Plot title</label>
                 <input type="text" id="plotTitle" name="plotTitle" placeholder="e.g. GPA vs Salary">
             </form>
         </div>
 
-        <!-- Правая колонка: график -->
+        <!-- Права колонка: попередній перегляд графіка -->
         <div class="plot-preview">
             <h3>Preview</h3>
             <img id="plotImage" src="" style="max-width: 100%; display: none;" />
@@ -55,7 +60,7 @@
         </div>
     </div>
 
-    <!-- ПЕРЕМЕЩЁННЫЙ БЛОК: предпросмотр под основной панелью -->
+    <!-- Попередній перегляд вмісту файлів -->
     <div class="file-preview-section">
         <div class="file-preview" id="filePreview1">
             <h4>Preview File 1</h4>
@@ -68,6 +73,7 @@
     </div>
 </section>
 
+<!-- Підключення стилів і скриптів -->
 <link rel="stylesheet" href="{{ url_for('static', filename='styles/style-simple-plots.css') }}">
 <script src="{{ url_for('static', filename='scripts/simple_plots.js') }}"></script>
 {% endblock %}

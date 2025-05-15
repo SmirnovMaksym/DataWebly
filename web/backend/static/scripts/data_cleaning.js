@@ -1,3 +1,4 @@
+// Основні DOM-елементи
 const startProcessButton = document.getElementById('startProcess');
 const downloadFileButton = document.getElementById('downloadFile');
 const fileInput = document.getElementById('fileInput');
@@ -6,7 +7,7 @@ const progressText = document.getElementById('progressText');
 const tableContainer = document.getElementById('tableContainer');
 let cleanedData = null;
 
-// Обработчик кнопки запуска очистки
+// Обробка натискання кнопки "Start Data Cleaning"
 startProcessButton.addEventListener('click', () => {
     const formData = new FormData();
     const file = fileInput.files[0];
@@ -18,19 +19,24 @@ startProcessButton.addEventListener('click', () => {
 
     formData.append('file', file);
 
-    // Считываем выбранные значения
-    const missingCols = Array.from(document.getElementById('missingValueColumns').selectedOptions).map(opt => opt.value);
+    // Збір обраних колонок з чекбоксів
+    function getCheckedValues(containerId) {
+        const container = document.getElementById(containerId);
+        return Array.from(container.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.value);
+    }
+
+    const missingCols = getCheckedValues('missingValueColumns');
     missingCols.forEach(col => formData.append('missingValueColumns', col));
 
-    const selectedCols = Array.from(document.getElementById('selectedColumns').selectedOptions).map(opt => opt.value);
+    const selectedCols = getCheckedValues('selectedColumns');
     selectedCols.forEach(col => formData.append('selectedColumns', col));
 
-    const dateCols = Array.from(document.getElementById('dateColumn').selectedOptions).map(opt => opt.value);
+    const dateCols = getCheckedValues('dateColumn');
     dateCols.forEach(col => formData.append('dateColumn', col));
-
 
     updateProgressBar(10);
 
+    // Надсилання запиту на очищення даних
     fetch('/process-data', {
         method: 'POST',
         body: formData,
@@ -39,8 +45,11 @@ startProcessButton.addEventListener('click', () => {
     .then(data => {
         if (data.status === 'success') {
             updateProgressBar(100);
+
+            // Відображення обох таблиць
             displayTable(data.preview, 'Original Data Preview');
             displayTable(data.cleaned_preview, 'Cleaned Data Preview');
+
             cleanedData = data;
             downloadFileButton.disabled = false;
             downloadFileButton.classList.remove('disabled');
@@ -53,7 +62,7 @@ startProcessButton.addEventListener('click', () => {
     });
 });
 
-// Обработчик скачивания
+// Обробка завантаження очищеного файлу
 downloadFileButton.addEventListener('click', () => {
     if (cleanedData) {
         const fileId = cleanedData.file_id;
@@ -63,19 +72,20 @@ downloadFileButton.addEventListener('click', () => {
     }
 });
 
-// Функция обновления прогресс-бара
+// Оновлення прогрес-бара
 function updateProgressBar(percentage) {
     progressBar.style.width = `${percentage}%`;
     progressText.innerText = `${percentage}%`;
 }
 
-// Показывает таблицу
+// Відображення таблиці з даними
 function displayTable(data, title) {
-    tableContainer.innerHTML = ''; // очищаем таблицу при каждом запуске
+    const wrapper = document.createElement('div');
+    wrapper.classList.add('preview-block');
 
     const tableTitle = document.createElement('h4');
     tableTitle.innerText = title;
-    tableContainer.appendChild(tableTitle);
+    wrapper.appendChild(tableTitle);
 
     const table = document.createElement('table');
     table.classList.add('data-table');
@@ -95,17 +105,18 @@ function displayTable(data, title) {
         const tr = document.createElement('tr');
         Object.values(row).forEach(value => {
             const td = document.createElement('td');
-            td.textContent = value !== null && value !== undefined ? value : '';
+            td.textContent = value ?? '';
             tr.appendChild(td);
         });
         tbody.appendChild(tr);
     });
-    table.appendChild(tbody);
 
-    tableContainer.appendChild(table);
+    table.appendChild(tbody);
+    wrapper.appendChild(table);
+    tableContainer.appendChild(wrapper);
 }
 
-// Обработчики drag & drop
+// 🖱Обробка drag & drop
 const fileDropArea = document.getElementById('fileDropArea');
 const fileNameDisplay = document.getElementById('fileNameDisplay');
 
@@ -131,7 +142,7 @@ fileDropArea.addEventListener('drop', (event) => {
     handleFileLoad(file);
 });
 
-// Обработка выбора файла через input
+// Обробка вибору файлу через інпут
 fileInput.addEventListener('change', async (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -140,7 +151,7 @@ fileInput.addEventListener('change', async (event) => {
     }
 });
 
-// Загрузка колонок с сервера
+// Завантаження колонок та попереднього перегляду
 async function handleFileLoad(file) {
     const selectedColumns = document.getElementById('selectedColumns');
     const dateColumn = document.getElementById('dateColumn');
@@ -195,36 +206,32 @@ async function handleFileLoad(file) {
     }
 }
 
-// Заполняем селекты колонками
+// Заповнення випадаючих списків колонками
 function populateColumnSelectors(columns) {
-    const selectedColumns = document.getElementById('selectedColumns');
-    const dateColumn = document.getElementById('dateColumn');
-    const missingValueColumns = document.getElementById('missingValueColumns');
+    const config = [
+        { id: 'missingValueColumns' },
+        { id: 'selectedColumns' },
+        { id: 'dateColumn' }
+    ];
 
-    // Очистка перед заполнением
-    selectedColumns.innerHTML = '';
-    dateColumn.innerHTML = '';
-    missingValueColumns.innerHTML = '';
+    config.forEach(({ id }) => {
+        const container = document.getElementById(id);
+        const content = container.querySelector('.dropdown-content');
 
-     columns.forEach(col => {
-        const opt1 = new Option(col, col);
-        missingValueColumns.appendChild(opt1);
+        if (!container || !content) return;
 
-        const opt2 = new Option(col, col);
-        selectedColumns.appendChild(opt2);
+        content.innerHTML = '';
+        container.classList.remove('hidden');
 
-        const opt3 = new Option(col, col);
-        dateColumn.appendChild(opt3);
+        columns.forEach(col => {
+            const label = document.createElement('label');
+            label.innerHTML = `<input type="checkbox" value="${col}"> ${col}`;
+            content.appendChild(label);
+        });
     });
-
-
-    // Показать селекты, когда файл загружен
-    selectedColumns.classList.remove('hidden');
-    dateColumn.classList.remove('hidden');
-    missingValueColumns.classList.remove('hidden');
 }
 
-// Показывать/скрывать селекты при выборе чекбоксов
+// Показ/приховування вибору колонок при увімкненні чекбоксів
 document.getElementById('detectDuplicates').addEventListener('change', function () {
     document.getElementById('selectedColumns').classList.toggle('hidden', !this.checked);
 });
@@ -237,7 +244,5 @@ document.getElementById('removeMissing').addEventListener('change', function () 
     document.getElementById('missingValueColumns').classList.toggle('hidden', !this.checked);
 });
 
-
-
-// Очистка таблицы при загрузке новой
+// Очистка старої таблиці при кожному завантаженні
 tableContainer.innerHTML = '';

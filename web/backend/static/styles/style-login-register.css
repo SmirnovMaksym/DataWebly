@@ -1,27 +1,27 @@
 body {
   font-family: Arial, sans-serif;
-  background-color: #1b1b1b; /* Dark background */
+  background-color: #1b1b1b;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
   margin: 0;
-  flex-direction: column; /* Added for layout of the title above the form */
+  flex-direction: column;
 }
 
 h2 {
-  color: #c0c0c0; /* Light grey text */
-  margin-bottom: 30px; /* Reduced margin for better layout */
+  color: #c0c0c0;
+  margin-bottom: 30px;
 }
 
 .form-container {
-  background-color: #242424; /* Darker grey */
+  background-color: #242424;
   padding: 30px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
   width: 300px;
   color: white;
-  text-align: center; /* Center align text within the form container */
+  text-align: center;
 }
 
 .form-group {
@@ -37,21 +37,21 @@ h2 {
 .form-group input {
   width: 90%;
   padding: 10px;
-  border: 1px solid #333; /* Dark border for input */
+  border: 1px solid #333;
   border-radius: 5px;
-  background-color: #333; /* Dark input background */
+  background-color: #333;
   color: white;
 }
 
 .form-group input:focus {
-  border-color: #66cc66; /* Light green focus */
+  border-color: #66cc66;
   outline: none;
 }
 
 .form-group button {
   width: 100%;
   padding: 10px;
-  background-color: #28a745; /* Green background for button */
+  background-color: #28a745;
   color: white;
   border: none;
   border-radius: 5px;
@@ -60,7 +60,7 @@ h2 {
 }
 
 .form-group button:hover {
-  background-color: #218838; /* Darker green on hover */
+  background-color: #218838;
 }
 
 .form-switch {
@@ -70,7 +70,7 @@ h2 {
 }
 
 .form-switch a {
-  color: #66cc66; /* Light green link */
+  color: #66cc66;
   text-decoration: none;
 }
 
