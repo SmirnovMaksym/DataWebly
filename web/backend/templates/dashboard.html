@@ -5,40 +5,76 @@
 <section class="dashboard-section">
     <h2>Create Your Dashboard</h2>
 
-    <!-- Форма для вибору файлу та параметрів графіка -->
+    <!-- панель управління графіками -->
     <div class="graph-control">
-        <form id="graphForm">
-            <!-- Завантаження файлу -->
-            <label for="dashboardFile">Select file:</label>
-            <input type="file" id="dashboardFile" accept=".csv,.xlsx">
+        <form id="graphForm" class="dashboard-grid-form">
 
-            <!-- Вибір осі X -->
-            <label for="xAxis">X Axis:</label>
+          <!-- 1 колонка: названия файлов и объединение -->
+          <div class="form-column">
+            <label for="dashboardFiles" class="upload-label">Upload up to 2 files</label>
+            <input type="file" id="dashboardFiles" multiple accept=".csv,.xlsx" hidden>
+            <p id="fileNamesDisplay">No files uploaded</p>
+
+            <div class="merge-settings hidden">
+              <label for="mergeLeft" id="mergeLabel1">Merge column (File 1)</label>
+              <select id="mergeLeft"></select>
+
+              <label for="mergeRight" id="mergeLabel2">Merge column (File 2)</label>
+              <select id="mergeRight"></select>
+            </div>
+          </div>
+
+          <!-- 2 колонка: групування -->
+          <div class="form-column">
+            <label for="groupBy">Group by</label>
+            <select id="groupBy"></select>
+
+            <label for="aggFunc">Aggregate function</label>
+            <select id="aggFunc">
+              <option value="">None</option>
+              <option value="sum">Sum</option>
+              <option value="mean">Mean</option>
+              <option value="count">Count</option>
+              <option value="max">Max</option>
+              <option value="min">Min</option>
+            </select>
+          </div>
+
+          <!-- 3 колонка: осі -->
+          <div class="form-column">
+            <label for="xAxis">X Axis</label>
             <select id="xAxis"></select>
 
-            <!-- Вибір осі Y -->
-            <label for="yAxis">Y Axis:</label>
+            <label for="yAxis">Y Axis</label>
             <select id="yAxis"></select>
+          </div>
 
-            <!-- Вибір типу графіка -->
-            <label for="graphType">Graph type:</label>
-            <select id="graphType">
+          <!-- нижній ряд: тип графіка + кнопка -->
+          <div class="form-footer">
+            <div class="graph-type">
+              <label for="graphType">Graph Type</label>
+              <select id="graphType">
                 <option value="bar">Bar</option>
                 <option value="line">Line</option>
                 <option value="pie">Pie</option>
                 <option value="scatter">Scatter</option>
-            </select>
+              </select>
+            </div>
+            <button type="submit" class="action-button">Add to Dashboard</button>
+          </div>
 
-            <!-- Кнопка додавання графіка до дашборду -->
-            <button type="submit">Add to Dashboard</button>
         </form>
     </div>
 
-    <!-- Контейнер для відображення графіків -->
+    <!-- контейнер для графіків -->
     <div id="dashboardGrid" class="dashboard-grid"></div>
+    <button id="downloadDashboard" class="action-button hidden" style="margin-top: 20px;">
+      Download Dashboard as Image
+    </button>
 </section>
 
-<!-- Підключення стилів та JavaScript -->
-<link rel="stylesheet" href="{{ url_for('static', filename='styles/style-dashboard.css') }}">
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script src="{{ url_for('static', filename='scripts/dashboard.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/style-dashboard.css') }}">
 {% endblock %}

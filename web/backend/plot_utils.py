@@ -31,7 +31,20 @@ def build_plot(file_objs, params):
     try:
         # Побудова відповідного типу графіка
         if plot_type == 'bar':
-            grouped = df.groupby(x)[y].sum()
+            agg_func = params.get('agg_func', 'sum')
+            grouped = df.groupby(x)[y]
+
+            if agg_func == 'mean':
+                grouped = grouped.mean()
+            elif agg_func == 'count':
+                grouped = grouped.count()
+            elif agg_func == 'max':
+                grouped = grouped.max()
+            elif agg_func == 'min':
+                grouped = grouped.min()
+            else:
+                grouped = grouped.sum()
+
             grouped.plot(kind='bar', ax=ax)
 
         elif plot_type == 'line':

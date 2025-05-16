@@ -415,32 +415,105 @@ def dashboard_parse():
 # Побудова графіка на дашборді
 @app.route('/dashboard-plot', methods=['POST'])
 def dashboard_plot():
-    data = request.get_json()
-    df = pd.DataFrame(data['data'])
-    x = data['x']
-    y = data['y']
-    plot_type = data['type']
+    try:
+        files = request.files.getlist('files')
+        if len(files) == 0:
+            return "No files uploaded", 400
 
+        buf, mimetype = generate_plot(files, request.form)
+        return send_file(buf, mimetype=mimetype)
+
+    except Exception as e:
+        return f"Plotting error: {str(e)}", 500
+
+@app.route("/dashboard-plot-merged", methods=["POST"])
+def dashboard_plot_merged():
+    data = request.get_json()
+
+    df1 = pd.DataFrame(data.get("data1", []))
+    df2 = pd.DataFrame(data.get("data2", []))
+    merge_left = data.get("mergeLeft")
+    merge_right = data.get("mergeRight")
+    group_by = data.get("groupBy")
+    agg_func = data.get("aggFunc")
+    x = data.get("x")
+    y = data.get("y")
+    plot_type = data.get("type")
+
+    # якщо потрібно лише список колонок — повертаємо одразу після об'єднання
+    if data.get("return_columns_only"):
+        if merge_left and merge_right and not df2.empty:
+            try:
+                df = df1.merge(df2, left_on=merge_left, right_on=merge_right)
+            except Exception as e:
+                return jsonify({'error': f"Merge error: {str(e)}"}), 400
+        else:
+            df = df1
+        return jsonify({"columns": df.columns.tolist()})
+
+    # основне об'єднання
+    if merge_left and merge_right and not df2.empty:
+        try:
+            df = df1.merge(df2, left_on=merge_left, right_on=merge_right)
+        except Exception as e:
+            return f"Merge error: {str(e)}", 400
+    else:
+        df = df1
+
+    # Групування + агрегація
+    if group_by and agg_func:
+        try:
+            if agg_func == "count":
+                df = df.groupby(group_by)[y].count().reset_index(name=y)
+            else:
+                df = df.groupby(group_by)[y].agg(agg_func).reset_index()
+            x = group_by
+        except Exception as e:
+            return f"Aggregation error: {str(e)}", 400
+
+    # Побудова графіка
     plt.clf()
     fig, ax = plt.subplots()
 
-    if plot_type == 'bar':
-        df.groupby(x)[y].sum().plot(kind='bar', ax=ax)
-    elif plot_type == 'line':
-        df.groupby(x)[y].sum().plot(kind='line', ax=ax)
-    elif plot_type == 'pie':
-        df.groupby(x)[y].sum().plot(kind='pie', y=None, ax=ax, autopct='%1.1f%%')
-        ax.set_ylabel("")
-    elif plot_type == 'scatter':
-        ax.scatter(df[x], df[y])
+    try:
+        if plot_type == "bar":
+            df.plot(kind="bar", x=x, y=y, ax=ax)
+        elif plot_type == "line":
+            df.plot(kind="line", x=x, y=y, ax=ax)
+        elif plot_type == "pie":
+            df.set_index(x)[y].plot(kind="pie", autopct="%1.1f%%", ax=ax)
+            ax.set_ylabel("")
+        elif plot_type == "scatter":
+            df.plot(kind="scatter", x=x, y=y, ax=ax)
 
-    ax.set_title(f"{y} vs {x}")
+        ax.set_title(f"{y} vs {x}")
+        plt.tight_layout()
 
-    img = io.BytesIO()
-    plt.tight_layout()
-    plt.savefig(img, format='png')
-    img.seek(0)
-    return send_file(img, mimetype='image/png')
+        img = io.BytesIO()
+        plt.savefig(img, format="png")
+        img.seek(0)
+        return send_file(img, mimetype="image/png")
+    except Exception as e:
+        return f"Plotting error: {str(e)}", 500
+
+@app.route('/preview-merged-columns', methods=['POST'])
+def preview_merged_columns():
+    files = request.files.getlist('files')
+    if len(files) < 2:
+        return jsonify({'error': 'Need 2 files'}), 400
+
+    merge_left = request.form.get('merge_left')
+    merge_right = request.form.get('merge_right')
+
+    df1 = pd.read_csv(files[0]) if files[0].filename.endswith('.csv') else pd.read_excel(files[0])
+    df2 = pd.read_csv(files[1]) if files[1].filename.endswith('.csv') else pd.read_excel(files[1])
+
+    try:
+        merged = df1.merge(df2, left_on=merge_left, right_on=merge_right)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+
+    return jsonify({'columns': list(merged.columns)})
 
 # Сторінка з побудовою моделей (лінійна/логістична регресія)
 @app.route('/predicting-models')

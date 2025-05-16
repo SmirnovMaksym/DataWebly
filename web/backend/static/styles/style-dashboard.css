@@ -24,13 +24,12 @@
 }
 
 #graphForm select,
-#graphForm input[type="file"] {
-    flex: 1 1 150px;
-    background-color: #444;
-    color: white;
-    border: 1px solid #666;
-    padding: 6px;
-    border-radius: 4px;
+#graphForm input[type="file"],
+#graphForm p,
+#graphForm label {
+    width: 100%;
+    max-height: 38px;
+    box-sizing: border-box;
 }
 
 #graphForm button {
@@ -76,4 +75,138 @@
     height: 24px;
     font-size: 14px;
     cursor: pointer;
+}
+
+.upload-label {
+    background-color: #5cb85c;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+.upload-label:hover {
+    background-color: #4cae4c;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.graph-card {
+    background-color: #1e1e1e;
+    border: 1px solid #444;
+    padding: 10px;
+    border-radius: 6px;
+    position: relative;
+}
+
+.graph-controls {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+}
+
+.move-btn {
+    background-color: #444;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin-right: 5px;
+    cursor: pointer;
+}
+
+.upload-label {
+    display: inline-block;
+    background-color: #5cb85c;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.graph-card {
+    max-width: 360px;
+    width: 32%;
+}
+
+.move-btn {
+    margin: 2px;
+    padding: 4px 6px;
+    font-size: 14px;
+    background-color: #444;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.dashboard-grid-form {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  align-items: flex-start;
+}
+
+.form-column {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form-footer {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: 20px;
+}
+
+.form-footer .graph-type {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-footer select {
+  background-color: #444;
+  color: white;
+  border: 1px solid #666;
+  padding: 6px;
+  border-radius: 4px;
+  width: 200px;
+}
+
+.action-button {
+  padding: 10px 20px;
+  background-color: #5cb85c;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.action-button:hover {
+  background-color: #4cae4c;
+}
+
+.hidden {
+  display: none !important;
+}
+
+#fileNamesDisplay {
+    margin: 8px 0 12px 0;
+    color: #ccc;
+    font-size: 14px;
+    line-height: 1.4;
+    white-space: pre-line; /* обеспечивает переносы по \n */
 }

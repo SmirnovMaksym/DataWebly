@@ -1,78 +1,146 @@
-let currentData = null;
+let uploadedFiles = [];
 
-// Обробка завантаження файлу користувачем
-document.getElementById("dashboardFile").addEventListener("change", async (e) => {
-    const file = e.target.files[0];
+// DOM-елементи
+const fileInput = document.getElementById("dashboardFiles");
+const fileNameDisplay = document.getElementById("fileNamesDisplay");
+const mergeLeft = document.getElementById("mergeLeft");
+const mergeRight = document.getElementById("mergeRight");
+const xAxis = document.getElementById("xAxis");
+const yAxis = document.getElementById("yAxis");
+const groupBy = document.getElementById("groupBy");
+const aggFunc = document.getElementById("aggFunc");
+const graphType = document.getElementById("graphType");
+const form = document.getElementById("graphForm");
+
+// обробка вибору файлів
+fileInput.addEventListener("change", async () => {
+    uploadedFiles = Array.from(fileInput.files);
+    fileNameDisplay.innerHTML = uploadedFiles.length > 0
+      ? uploadedFiles.map(f => `<div>${f.name}</div>`).join("")
+      : "No files uploaded";
+
     const formData = new FormData();
-    formData.append("file", file);
+    uploadedFiles.forEach(file => formData.append("files", file));
 
-    // Надсилаємо файл на сервер для попереднього аналізу
-    const res = await fetch("/dashboard-parse", {
+    const res = await fetch("/get-plot-columns", {
         method: "POST",
         body: formData
     });
 
-    const json = await res.json();
-    currentData = json.data;
+    const data = await res.json();
 
-    // Отримуємо список колонок
-    const columns = json.columns;
-    const xAxis = document.getElementById("xAxis");
-    const yAxis = document.getElementById("yAxis");
+    // очищення всіх селектів
+    [mergeLeft, mergeRight, xAxis, yAxis, groupBy].forEach(sel => sel.innerHTML = "");
 
-    // Очищаємо попередній список
-    xAxis.innerHTML = "";
-    yAxis.innerHTML = "";
+    if (uploadedFiles.length === 1 && data.file1) {
+        populateSelect(xAxis, data.file1);
+        populateSelect(yAxis, data.file1);
+        populateSelect(groupBy, data.file1);
+        document.querySelector(".merge-settings").classList.add("hidden");
+    } else if (uploadedFiles.length === 2 && data.file1 && data.file2) {
+        const labelLeft = document.querySelector('label[for="mergeLeft"]');
+        const labelRight = document.querySelector('label[for="mergeRight"]');
+        if (labelLeft && labelRight) {
+            labelLeft.textContent = `Merge column (${uploadedFiles[0].name})`;
+            labelRight.textContent = `Merge column (${uploadedFiles[1].name})`;
+        }
 
-    // Додаємо колонки до списків вибору осей
-    columns.forEach(col => {
-        const opt1 = new Option(col, col);
-        const opt2 = new Option(col, col);
-        xAxis.appendChild(opt1);
-        yAxis.appendChild(opt2);
-    });
+        populateSelect(mergeLeft, data.file1);
+        populateSelect(mergeRight, data.file2);
+
+        const mergedColumns = [...new Set([...data.file1, ...data.file2])];
+        populateSelect(xAxis, mergedColumns);
+        populateSelect(yAxis, mergedColumns);
+        populateSelect(groupBy, mergedColumns);
+        document.querySelector(".merge-settings").classList.remove("hidden");
+    }
 });
 
-// Обробка події побудови графіку
-document.getElementById("graphForm").addEventListener("submit", async (e) => {
-    e.preventDefault(); // Забороняємо перезавантаження сторінки
+// сабміт форми
+form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (uploadedFiles.length === 0) return;
 
-    const type = document.getElementById("graphType").value;
-    const x = document.getElementById("xAxis").value;
-    const y = document.getElementById("yAxis").value;
+    const formData = new FormData();
+    uploadedFiles.forEach(file => formData.append("files", file));
+    formData.append("merge_left", mergeLeft.value);
+    formData.append("merge_right", mergeRight.value);
+    formData.append("x_column", xAxis.value);
+    formData.append("y_column", yAxis.value);
+    formData.append("plot_type", graphType.value);
+    formData.append("group_by", groupBy.value);
+    formData.append("agg_func", aggFunc.value);
 
-    // Надсилаємо запит на побудову графіка
     const res = await fetch("/dashboard-plot", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            type: type,
-            x: x,
-            y: y,
-            data: currentData
-        })
+        body: formData
     });
 
-    const blob = await res.blob();
-    const url = URL.createObjectURL(blob); // Створюємо посилання на зображення
+    if (!res.ok) {
+        const error = await res.text();
+        alert("Error building plot:\n" + error);
+        return;
+    }
 
-    // Створюємо блок для відображення графіку
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+
     const card = document.createElement("div");
     card.classList.add("graph-card");
 
     const img = document.createElement("img");
     img.src = url;
-    img.alt = `${type} chart`;
 
-    // Кнопка для видалення графіку
     const removeBtn = document.createElement("button");
+    removeBtn.className = "remove-btn";
     removeBtn.textContent = "❌";
-    removeBtn.classList.add("remove-btn");
-    removeBtn.onclick = () => card.remove();
+    removeBtn.onclick = () => {
+        card.remove();
+
+        const remaining = document.querySelectorAll(".graph-card");
+        if (remaining.length === 0) {
+            document.getElementById("downloadDashboard").classList.add("hidden");
+        }
+    };
+    const upBtn = document.createElement("button");
+    upBtn.textContent = "↑";
+    upBtn.className = "move-btn";
+    upBtn.onclick = () => {
+        const prev = card.previousElementSibling;
+        if (prev) card.parentNode.insertBefore(card, prev);
+    };
+
+    const downBtn = document.createElement("button");
+    downBtn.textContent = "↓";
+    downBtn.className = "move-btn";
+    downBtn.onclick = () => {
+        const next = card.nextElementSibling;
+        if (next) card.parentNode.insertBefore(next, card);
+    };
 
     card.appendChild(removeBtn);
+    card.appendChild(upBtn);
+    card.appendChild(downBtn);
     card.appendChild(img);
 
-    // Додаємо графік на дашборд
     document.getElementById("dashboardGrid").appendChild(card);
+    document.getElementById("downloadDashboard").classList.remove("hidden");
+});
+
+function populateSelect(selectEl, columns) {
+    selectEl.innerHTML = "";
+    columns.forEach(col => {
+        const opt = new Option(col, col);
+        selectEl.appendChild(opt);
+    });
+}
+
+document.getElementById("downloadDashboard").addEventListener("click", () => {
+    const dashboard = document.getElementById("dashboardGrid");
+    html2canvas(dashboard).then(canvas => {
+        const link = document.createElement("a");
+        link.download = "dashboard.png";
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+    });
 });
